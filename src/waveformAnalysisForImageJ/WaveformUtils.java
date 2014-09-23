@@ -4,10 +4,10 @@ package waveformAnalysisForImageJ;
 import java.util.Arrays;
 
 /**
- * Static methods for waveform analysis in ImageJ plugins.
+ * Static utility methods for waveform analysis in ImageJ plugins.
  *
  * @author Jon N. Marsh
- * @version 2014-02-03
+ * @version 2014-09-23
  */
 public class WaveformUtils
 {
