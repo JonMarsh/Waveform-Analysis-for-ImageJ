@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.PanelFormInfo">
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="label2" min="-2" max="-2" attributes="0"/>
+                  <Component id="label1" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="label7" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="label6" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="label5" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="createGatesButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="label3" min="-2" max="-2" attributes="0"/>
+                  <Component id="label4" min="-2" max="-2" attributes="0"/>
+                  <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="label8" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="outputFileChoice" pref="38" max="32767" attributes="0"/>
+                      <EmptySpace min="173" pref="173" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="filterChoice" min="-2" max="-2" attributes="0"/>
+                          <Component id="okButton" min="-2" max="-2" attributes="0"/>
+                          <Component id="outputGateROIsCheckbox" min="-2" max="-2" attributes="0"/>
+                          <Component id="outputGatedWaveformsCheckbox" min="-2" max="-2" attributes="0"/>
+                          <Component id="outputGatePositionsCheckbox" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchBackwardsCheckbox" min="-2" max="-2" attributes="0"/>
+                          <Component id="outputGateRegionsCheckbox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="gateLengthTextField" alignment="0" max="32767" attributes="0"/>
+                              <Component id="thresholdTextField" alignment="0" pref="100" max="32767" attributes="0"/>
+                              <Component id="offsetTextField" alignment="0" max="32767" attributes="0"/>
+                              <Component id="searchStartPointTextField" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="smoothGatesButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="smoothingRadiusTextField" alignment="0" min="-2" pref="72" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label5" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="searchStartPointTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label6" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="offsetTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label7" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="thresholdTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label1" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="gateLengthTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="searchBackwardsCheckbox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="smoothGatesButton" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="createGatesButton" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label8" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="filterChoice" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label2" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="smoothingRadiusTextField" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label3" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="outputFileChoice" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="label4" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="outputGatePositionsCheckbox" alignment="2" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="outputGateRegionsCheckbox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="outputGatedWaveformsCheckbox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="outputGateROIsCheckbox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="okButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="java.awt.Label" name="label5">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Start searching at point"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.TextField" name="searchStartPointTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="0"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Label" name="label6">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Offset from detected border"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.TextField" name="offsetTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="0"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Label" name="label7">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Threshold"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.TextField" name="thresholdTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="0.000"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Label" name="label1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Gate length"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.TextField" name="gateLengthTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="0"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Checkbox" name="searchBackwardsCheckbox">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Reverse search"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Button" name="smoothGatesButton">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Smooth gates"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="smoothGatesButtonActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Button" name="createGatesButton">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Create gates"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Label" name="label2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Smoothing radius"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.TextField" name="smoothingRadiusTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="1"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="smoothingRadiusTextFieldActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Choice" name="outputFileChoice">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Label" name="label3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Apply gating to"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.Checkbox" name="outputGatePositionsCheckbox">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Gate start positions"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Checkbox" name="outputGateRegionsCheckbox">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Gated portion of waveforms"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Checkbox" name="outputGatedWaveformsCheckbox">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Entire gated waveforms"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Checkbox" name="outputGateROIsCheckbox">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Gate ROI&apos;s"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Label" name="label4">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Output"/>
+      </Properties>
+    </Component>
+    <Component class="java.awt.Button" name="okButton">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="OK"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Button" name="cancelButton">
+      <Properties>
+        <Property name="label" type="java.lang.String" value="Cancel"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Choice" name="filterChoice">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="java.awt.Label" name="label8">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Filter"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>
