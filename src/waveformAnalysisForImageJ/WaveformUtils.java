@@ -1,6 +1,9 @@
 package waveformAnalysisForImageJ;
 
 
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.process.ImageProcessor;
 import java.util.Arrays;
 
 /**
@@ -2218,7 +2221,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code byte}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	byte[] unboxArray(Byte[] a)
+	public static final byte[] unboxArray(Byte[] a)
 	{
 		byte[] unboxedArray;
 		
@@ -2242,7 +2245,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code int}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	int[] unboxArray(Integer[] a)
+	public static final int[] unboxArray(Integer[] a)
 	{
 		int[] unboxedArray;
 		
@@ -2266,7 +2269,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code short}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	short[] unboxArray(Short[] a)
+	public static final short[] unboxArray(Short[] a)
 	{
 		short[] unboxedArray;
 		
@@ -2290,7 +2293,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code long}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	long[] unboxArray(Long[] a)
+	public static final long[] unboxArray(Long[] a)
 	{
 		long[] unboxedArray;
 		
@@ -2314,7 +2317,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code float}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	float[] unboxArray(Float[] a)
+	public static final float[] unboxArray(Float[] a)
 	{
 		float[] unboxedArray;
 		
@@ -2338,7 +2341,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code double}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	double[] unboxArray(Double[] a)
+	public static final double[] unboxArray(Double[] a)
 	{
 		double[] unboxedArray;
 		
@@ -2362,7 +2365,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code char}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	char[] unboxArray(Character[] a)
+	public static final char[] unboxArray(Character[] a)
 	{
 		char[] unboxedArray;
 		
@@ -2386,7 +2389,7 @@ public class WaveformUtils
 	 * @return unboxed array of {@code boolean}s, unless input is {@code null}, in
 	 *         which case the output is also {@code null}
 	 */
-	boolean[] unboxArray(Boolean[] a)
+	public static final boolean[] unboxArray(Boolean[] a)
 	{
 		boolean[] unboxedArray;
 		
@@ -2402,6 +2405,44 @@ public class WaveformUtils
 		return unboxedArray;
 	}
 	
+	
+	//--------------------global minAndMax Methods----------------------------//
+
+	/**
+	 * Compute the global minimum and maximum pixel values of an input ImageJ
+	 * {@code Imageplus} object. The min and max values are computed over all
+	 * slices of an image. If {@code image} is null, the return value is null.
+	 *
+	 * @param image
+	 * @return two-element {@code double} array whose first value is the global
+	 *         minimum pixel value and whose second value is the global maximum
+	 *         pixel value of {@code image}
+	 */
+		public static final double[] getGlobalMinAndMax(ImagePlus image)
+	{
+		double[] minAndMax = null;
+		
+		if (image != null) {
+			double globalMin = Double.POSITIVE_INFINITY;
+			double globalMax = Double.NEGATIVE_INFINITY;
+			int stackSize = image.getStackSize();
+			ImageStack stack = image.getStack();
+			for (int slice=1; slice<=stackSize; slice++) {
+				ImageProcessor processor = stack.getProcessor(slice);
+				double min = processor.getMin();
+				double max = processor.getMax();
+				if (min < globalMin) {
+					globalMin = min;
+				}
+				if (max > globalMax) {
+					globalMax = max;
+				}
+			}
+			minAndMax = new double[] {globalMin, globalMax};
+		}
+		
+		return minAndMax;
+	}
 	
 	//--------------------window Methods--------------------------------------//
 	/**
