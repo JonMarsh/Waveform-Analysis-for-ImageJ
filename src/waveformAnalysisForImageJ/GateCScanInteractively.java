@@ -15,7 +15,6 @@ import ij.process.ImageProcessor;
 import ij.plugin.filter.RankFilters;
 import ij.plugin.filter.GaussianBlur;
 import java.awt.Button;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -434,7 +433,7 @@ public class GateCScanInteractively implements PlugIn
 		// check to make sure there is a possibility of detecting a peak above the specified threshold
 		if (threshold < globalMinAndMax[1]) {
 			for (int slice = 1; slice <= stackSize; slice++) {
-				pixelValues = (float[]) stack.getProcessor(slice).getPixels();
+				pixelValues = (float[]) stack.getProcessor(slice).convertToFloat().getPixels();
 				short[] sliceGates = computeGateStartPositions(pixelValues, recordLength, recordsPerFrame, searchStartPoint, offsetPoint, threshold);
 				System.arraycopy(sliceGates, 0, gateStartPositions, (slice - 1) * recordsPerFrame, recordsPerFrame);
 			}
