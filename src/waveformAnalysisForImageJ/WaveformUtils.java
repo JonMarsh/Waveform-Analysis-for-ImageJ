@@ -2107,44 +2107,44 @@ public class WaveformUtils
 	 */
 	public static final float[] simpleDerivative(float[] a, float dx)
 	{
-		if (a == null) {
-			return null;
-		}
+		float[] deriv = null;
 
-		float[] deriv;
+		if (a != null) {
+			
+			if (a.length > 2) {
 
-		if (a.length > 2) {
+				// initialize output array
+				deriv = new float[a.length];
+				
+				float oneOverDx = 1.0f / dx;
+				float oneOver2Dx = oneOverDx * 0.5f;
 
-			// initialize output array
-			deriv = new float[a.length];
+				// approximate derivative at first point
+				deriv[0] = oneOverDx * (a[1] - a[0]);
 
-			float oneOverDx = 1.0f / dx;
-			float oneOver2Dx = oneOverDx * 0.5f;
+				// compute derivative at intermediate points
+				for (int i = 1; i < (deriv.length - 1); i++) {
+					deriv[i] = oneOver2Dx * (a[i + 1] - a[i - 1]);
+				}
 
-			// approximate derivative at index zero
-			deriv[0] = oneOverDx * (a[1] - a[0]);
-
-			// compute derivative at intermediate points
-			for (int i = 1; i < (deriv.length - 1); i++) {
-				deriv[i] = oneOver2Dx * (a[i + 1] - a[i - 1]);
+				// approximate slope at final point
+				deriv[a.length - 1] = oneOverDx * (a[a.length - 1] - a[a.length - 2]);
+				
+			} else if (a.length == 2) {
+				
+				float slope = (a[1] - a[0]) / dx;
+				deriv = new float[]{slope, slope};
+				
+			} else if (a.length == 1) {
+				
+				deriv = new float[]{Float.NaN};
+				
+			} else {
+				
+				deriv = new float[0];
+				
 			}
-
-			// approximate slope at final point
-			deriv[a.length - 1] = oneOverDx * (a[a.length - 1] - a[a.length - 2]);
-
-		} else if (a.length == 2) {
-
-			float slope = (a[1] - a[0]) / dx;
-			deriv = new float[]{slope, slope};
-
-		} else if (a.length == 1) {
-
-			deriv = new float[]{Float.NaN};
-
-		} else {
-
-			deriv = new float[0];
-
+			
 		}
 
 		return deriv;
@@ -2168,44 +2168,44 @@ public class WaveformUtils
 	 */
 	public static final double[] simpleDerivative(double[] a, double dx)
 	{
-		if (a == null) {
-			return null;
-		}
+		double[] deriv = null;
 
-		double[] deriv;
+		if (a != null) {
+			
+			if (a.length > 2) {
 
-		if (a.length > 2) {
+				// initialize output array
+				deriv = new double[a.length];
+				
+				double oneOverDx = 1.0 / dx;
+				double oneOver2Dx = oneOverDx * 0.5;
 
-			// initialize output array
-			deriv = new double[a.length];
+				// approximate derivative at first point
+				deriv[0] = oneOverDx * (a[1] - a[0]);
 
-			double oneOverDx = 1.0 / dx;
-			double oneOver2Dx = oneOverDx * 0.5;
+				// compute derivative at intermediate points
+				for (int i = 1; i < (deriv.length - 1); i++) {
+					deriv[i] = oneOver2Dx * (a[i + 1] - a[i - 1]);
+				}
 
-			// approximate derivative at index zero
-			deriv[0] = oneOverDx * (a[1] - a[0]);
-
-			// compute derivative at intermediate points
-			for (int i = 1; i < (deriv.length - 1); i++) {
-				deriv[i] = oneOver2Dx * (a[i + 1] - a[i - 1]);
+				// approximate slope at final point
+				deriv[a.length - 1] = oneOverDx * (a[a.length - 1] - a[a.length - 2]);
+				
+			} else if (a.length == 2) {
+				
+				double slope = (a[1] - a[0]) / dx;
+				deriv = new double[]{slope, slope};
+				
+			} else if (a.length == 1) {
+				
+				deriv = new double[]{Double.NaN};
+				
+			} else {
+				
+				deriv = new double[0];
+				
 			}
-
-			// approximate slope at final point
-			deriv[a.length - 1] = oneOverDx * (a[a.length - 1] - a[a.length - 2]);
-
-		} else if (a.length == 2) {
-
-			double slope = (a[1] - a[0]) / dx;
-			deriv = new double[]{slope, slope};
-
-		} else if (a.length == 1) {
-
-			deriv = new double[]{Double.NaN};
-
-		} else {
-
-			deriv = new double[0];
-
+			
 		}
 
 		return deriv;
@@ -2223,15 +2223,13 @@ public class WaveformUtils
 	 */
 	public static final byte[] unboxArray(Byte[] a)
 	{
-		byte[] unboxedArray;
+		byte[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new byte[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2247,15 +2245,13 @@ public class WaveformUtils
 	 */
 	public static final int[] unboxArray(Integer[] a)
 	{
-		int[] unboxedArray;
+		int[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new int[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2271,15 +2267,13 @@ public class WaveformUtils
 	 */
 	public static final short[] unboxArray(Short[] a)
 	{
-		short[] unboxedArray;
+		short[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new short[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2295,15 +2289,13 @@ public class WaveformUtils
 	 */
 	public static final long[] unboxArray(Long[] a)
 	{
-		long[] unboxedArray;
+		long[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new long[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2319,15 +2311,13 @@ public class WaveformUtils
 	 */
 	public static final float[] unboxArray(Float[] a)
 	{
-		float[] unboxedArray;
+		float[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new float[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2343,15 +2333,13 @@ public class WaveformUtils
 	 */
 	public static final double[] unboxArray(Double[] a)
 	{
-		double[] unboxedArray;
+		double[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new double[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2367,15 +2355,13 @@ public class WaveformUtils
 	 */
 	public static final char[] unboxArray(Character[] a)
 	{
-		char[] unboxedArray;
+		char[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new char[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2391,15 +2377,13 @@ public class WaveformUtils
 	 */
 	public static final boolean[] unboxArray(Boolean[] a)
 	{
-		boolean[] unboxedArray;
+		boolean[] unboxedArray = null;
 		
 		if (a != null) {
 			unboxedArray = new boolean[a.length];
 			for (int i=0; i<a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
-		} else {
-			unboxedArray = null;
 		}
 		
 		return unboxedArray;
@@ -2418,7 +2402,7 @@ public class WaveformUtils
 	 *         minimum pixel value and whose second value is the global maximum
 	 *         pixel value of {@code image}
 	 */
-		public static final double[] getGlobalMinAndMax(ImagePlus image)
+	public static final double[] getGlobalMinAndMax(ImagePlus image)
 	{
 		double[] minAndMax = null;
 		
