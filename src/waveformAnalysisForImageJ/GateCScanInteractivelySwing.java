@@ -20,8 +20,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -118,7 +123,19 @@ public class GateCScanInteractivelySwing implements PlugIn
 		private void addPanel()
 		{
 			panel = new GateCScanInteractivelySwingControlPanel();
-
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (ClassNotFoundException ex) {
+				Logger.getLogger(GateCScanInteractivelySwing.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InstantiationException ex) {
+				Logger.getLogger(GateCScanInteractivelySwing.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(GateCScanInteractivelySwing.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (UnsupportedLookAndFeelException ex) {
+				Logger.getLogger(GateCScanInteractivelySwing.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			SwingUtilities.updateComponentTreeUI(panel);
+			
 			panel.searchStartPointTextField.setText("" + autoStartSearchPoint);
 			panel.offsetTextField.setText("" + offsetPoint);
 			panel.thresholdTextField.setText(IJ.d2s(threshold, 3));
