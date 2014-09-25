@@ -24,7 +24,7 @@ import java.util.Arrays;
 /**
  *
  * @author jnm
- * @version 2014-09-23
+ * @version 2014-09-24
  */
 public class GateCScanInteractively implements PlugIn
 {
@@ -156,12 +156,14 @@ public class GateCScanInteractively implements PlugIn
 			searchBackwards = panel.searchBackwardsCheckbox.getState();
 
 			if (source == panel.createGatesButton) {
+				panel.createGatesButton.setLabel("Working...");
 				short[] gatePositions = computeGateStartPositionsForStack(stack, autoStartSearchPoint, offsetPoint, threshold);
 				gateProcessor.setPixels(gatePositions);
 				gatesExist = true;
 				IJ.resetMinAndMax();
 				short[] gatePositionsForDisplayedSlice = Arrays.copyOfRange(gatePositions, (currentSlice - 1) * recordsPerFrame, currentSlice * recordsPerFrame);
 				drawSingleROI(WindowManager.getImage(inputImageID), gatePositionsForDisplayedSlice, gateLength, searchBackwards);
+				panel.createGatesButton.setLabel("Create gates");
 			}
 
 			if (source == panel.smoothGatesButton) {
