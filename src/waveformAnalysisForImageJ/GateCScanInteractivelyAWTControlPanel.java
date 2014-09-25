@@ -16,13 +16,13 @@ import javax.swing.LayoutStyle;
  * @author jnm
  * @version 2014-09-19
  */
-public class GateCScanInteractivelyControlPanel extends java.awt.Panel
+public class GateCScanInteractivelyAWTControlPanel extends java.awt.Panel
 {
 
 	/**
 	 * Creates new form CreateCScanGatesPanel
 	 */
-	public GateCScanInteractivelyControlPanel()
+	public GateCScanInteractivelyAWTControlPanel()
 	{
 		initComponents();
 	}
@@ -49,7 +49,7 @@ public class GateCScanInteractivelyControlPanel extends java.awt.Panel
         createGatesButton = new Button();
         label2 = new Label();
         smoothingRadiusTextField = new TextField();
-        outputFileChoice = new Choice();
+        gateApplicationChoice = new Choice();
         label3 = new Label();
         outputGatePositionsCheckbox = new Checkbox();
         outputGateRegionsCheckbox = new Checkbox();
@@ -138,7 +138,7 @@ public class GateCScanInteractivelyControlPanel extends java.awt.Panel
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(outputFileChoice, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                        .addComponent(gateApplicationChoice, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
                         .addGap(173, 173, 173))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -195,7 +195,7 @@ public class GateCScanInteractivelyControlPanel extends java.awt.Panel
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                     .addComponent(label3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(outputFileChoice, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(gateApplicationChoice, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                     .addComponent(label4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -229,6 +229,7 @@ public class GateCScanInteractivelyControlPanel extends java.awt.Panel
     public Button cancelButton;
     public Button createGatesButton;
     public Choice filterChoice;
+    public Choice gateApplicationChoice;
     public TextField gateLengthTextField;
     private Label label1;
     private Label label2;
@@ -240,7 +241,6 @@ public class GateCScanInteractivelyControlPanel extends java.awt.Panel
     private Label label8;
     public TextField offsetTextField;
     public Button okButton;
-    public Choice outputFileChoice;
     public Checkbox outputGatePositionsCheckbox;
     public Checkbox outputGateROIsCheckbox;
     public Checkbox outputGateRegionsCheckbox;

@@ -33,7 +33,7 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="outputFileChoice" pref="38" max="32767" attributes="0"/>
+                      <Component id="gateApplicationChoice" pref="38" max="32767" attributes="0"/>
                       <EmptySpace min="173" pref="173" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
@@ -106,7 +106,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="label3" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="outputFileChoice" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="gateApplicationChoice" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
@@ -225,7 +225,7 @@
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
-    <Component class="java.awt.Choice" name="outputFileChoice">
+    <Component class="java.awt.Choice" name="gateApplicationChoice">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>

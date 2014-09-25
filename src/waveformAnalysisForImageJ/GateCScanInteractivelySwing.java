@@ -14,19 +14,21 @@ import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 import ij.plugin.filter.RankFilters;
 import ij.plugin.filter.GaussianBlur;
-import java.awt.Button;
+import java.awt.Panel;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 
 /**
  *
- * @author jnm
- * @version 2014-09-24
+ * @author Jon N. Marsh
+ * @version 2014-09-25
  */
-public class GateCScanInteractively implements PlugIn
+public class GateCScanInteractivelySwing implements PlugIn
 {
 	static int autoStartSearchPoint = 0;
 	static int offsetPoint = 0;
@@ -44,7 +46,7 @@ public class GateCScanInteractively implements PlugIn
 	static boolean outputGatedSegments = true;
 	static boolean outputGatedWaveforms = true;
 	static String pluginTitle = "Create gates for ";
-	static GateCScanInteractively instance;
+	static GateCScanInteractivelySwing instance;
 
 	ImagePlus inputImage, gateImage;
 	ImageStack stack;
@@ -97,7 +99,8 @@ public class GateCScanInteractively implements PlugIn
 	private class CreateGatesForCScanDialog extends ImageWindow implements ActionListener, ImageListener
 	{
 
-		GateCScanInteractivelyControlPanel panel;
+		Panel mainPanel;
+		GateCScanInteractivelySwingControlPanel panel;
 
 		/**
 		 * Constructor
@@ -114,31 +117,36 @@ public class GateCScanInteractively implements PlugIn
 		 */
 		private void addPanel()
 		{
-			panel = new GateCScanInteractivelyControlPanel();
+			panel = new GateCScanInteractivelySwingControlPanel();
 
 			panel.searchStartPointTextField.setText("" + autoStartSearchPoint);
 			panel.offsetTextField.setText("" + offsetPoint);
 			panel.thresholdTextField.setText(IJ.d2s(threshold, 3));
 			panel.gateLengthTextField.setText("" + gateLength);
-			panel.searchBackwardsCheckbox.setState(searchBackwards);
+			panel.searchBackwardsCheckbox.setSelected(searchBackwards);
 			panel.createGatesButton.addActionListener(this);
 			panel.smoothGatesButton.addActionListener(this);
 			for (String filter : filters) {
-				panel.filterChoice.add(filter);
+				panel.filterComboBox.addItem(filter);
 			}
-			panel.filterChoice.select(filterSelection);
+			panel.filterComboBox.setSelectedIndex(filterSelection);
 			panel.smoothingRadiusTextField.setText(IJ.d2s(smoothingRadius, 3));
-			panel.outputGatePositionsCheckbox.setState(outputGatePositions);
-			panel.outputGateROIsCheckbox.setState(outputGateROIs);
-			panel.outputGateRegionsCheckbox.setState(outputGatedSegments);
-			panel.outputGatedWaveformsCheckbox.setState(outputGatedWaveforms);
+			panel.outputGatePositionsCheckbox.setSelected(outputGatePositions);
+			panel.outputGateROIsCheckbox.setSelected(outputGateROIs);
+			panel.outputGatedRegionsCheckbox.setSelected(outputGatedSegments);
+			panel.outputGatedWaveformsCheckbox.setSelected(outputGatedWaveforms);
 			for (int imageID : suitableImageIDs) {
-				panel.outputFileChoice.add(WindowManager.getImage(imageID).getTitle());
+				panel.gateApplicationComboBox.addItem(WindowManager.getImage(imageID).getTitle());
 			}
 			panel.cancelButton.addActionListener(this);
 			panel.okButton.addActionListener(this);
 
-			add(panel);
+			mainPanel = new Panel();
+			BoxLayout mainLayout = new BoxLayout(mainPanel, BoxLayout.Y_AXIS);
+			mainPanel.setLayout(mainLayout);
+			mainPanel.add(panel);
+
+			add(mainPanel);
 			pack();
 		}
 
@@ -147,13 +155,13 @@ public class GateCScanInteractively implements PlugIn
 		 */
 		public void actionPerformed(ActionEvent e)
 		{
-			Button source = (Button)e.getSource();
+			JButton source = (JButton)e.getSource();
 			autoStartSearchPoint = Integer.parseInt(panel.searchStartPointTextField.getText());
 			offsetPoint = Integer.parseInt(panel.offsetTextField.getText());
 			threshold = Float.parseFloat(panel.thresholdTextField.getText());
 			gateLength = Integer.parseInt(panel.gateLengthTextField.getText());
 			smoothingRadius = Double.parseDouble(panel.smoothingRadiusTextField.getText());
-			searchBackwards = panel.searchBackwardsCheckbox.getState();
+			searchBackwards = panel.searchBackwardsCheckbox.isSelected();
 
 			if (source == panel.createGatesButton) {
 				panel.createGatesButton.setLabel("Working...");
@@ -168,7 +176,7 @@ public class GateCScanInteractively implements PlugIn
 
 			if (source == panel.smoothGatesButton) {
 				if (gatesExist) {
-					filterSelection = panel.filterChoice.getSelectedIndex();
+					filterSelection = panel.filterComboBox.getSelectedIndex();
 					switch (filterSelection) {
 						case MEDIAN: {
 							RankFilters rf = new RankFilters();
@@ -210,13 +218,13 @@ public class GateCScanInteractively implements PlugIn
 					 * static variables are reinitialized to previous values
 					 * next time plugin is called
 					 */
-					searchBackwards = panel.searchBackwardsCheckbox.getState();
-					outputGateROIs = panel.outputGateROIsCheckbox.getState();
-					outputGatePositions = panel.outputGatePositionsCheckbox.getState();
-					outputGatedSegments = panel.outputGateRegionsCheckbox.getState();
-					outputGatedWaveforms = panel.outputGatedWaveformsCheckbox.getState();
+					searchBackwards = panel.searchBackwardsCheckbox.isSelected();
+					outputGateROIs = panel.outputGateROIsCheckbox.isSelected();
+					outputGatePositions = panel.outputGatePositionsCheckbox.isSelected();
+					outputGatedSegments = panel.outputGatedRegionsCheckbox.isSelected();
+					outputGatedWaveforms = panel.outputGatedWaveformsCheckbox.isSelected();
 
-					int selectedImageID = suitableImageIDs[panel.outputFileChoice.getSelectedIndex()]; // apply gating to the desired image (not necessarily the image the gates were computed with)
+					int selectedImageID = suitableImageIDs[panel.gateApplicationComboBox.getSelectedIndex()]; // apply gating to the desired image (not necessarily the image the gates were computed with)
 					short[] gatePositions = (short[])gateProcessor.getPixels();
 
 					if (outputGateROIs == true) {
@@ -268,9 +276,9 @@ public class GateCScanInteractively implements PlugIn
 				instance = null;
 			} else {
 				suitableImageIDs = getSuitableImageIDs(inputImage, gateImage);
-				panel.outputFileChoice.removeAll();
+				panel.gateApplicationComboBox.removeAll();
 				for (int imageID : suitableImageIDs) {
-					panel.outputFileChoice.add(WindowManager.getImage(imageID).getTitle());
+					panel.gateApplicationComboBox.addItem(WindowManager.getImage(imageID).getTitle());
 				}
 			}
 		}
@@ -281,9 +289,9 @@ public class GateCScanInteractively implements PlugIn
 		public void imageOpened(ImagePlus image)
 		{
 			suitableImageIDs = getSuitableImageIDs(inputImage, gateImage);
-			panel.outputFileChoice.removeAll();
+			panel.gateApplicationComboBox.removeAll();
 			for (int imageID : suitableImageIDs) {
-				panel.outputFileChoice.add(WindowManager.getImage(imageID).getTitle());
+				panel.gateApplicationComboBox.addItem(WindowManager.getImage(imageID).getTitle());
 			}
 		}
 
