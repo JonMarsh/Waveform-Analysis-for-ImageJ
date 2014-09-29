@@ -67,6 +67,8 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
         cancelButton = new JButton();
         okButton = new JButton();
 
+        setBorder(BorderFactory.createEtchedBorder());
+
         searchStartPointTextField.setColumns(6);
         searchStartPointTextField.setText("0");
         searchStartPointTextField.addActionListener(new ActionListener()
