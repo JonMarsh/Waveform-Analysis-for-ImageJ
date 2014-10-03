@@ -107,9 +107,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 		Panel mainPanel;
 		GateCScanInteractivelySwingControlPanel panel;
 
-		/**
-		 * Constructor
-		 */
+		/* Constructor */
 		CreateGatesForCScanDialog(ImagePlus gateImagePlus, ImageCanvas gateImageCanvas)
 		{
 			super(gateImagePlus, gateImageCanvas);
@@ -117,9 +115,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 			ImagePlus.addImageListener(this);
 		}
 
-		/*
-		 * Add control panel underneath gate image on user interface window
-		 */
+		/* Add control panel underneath gate image on user interface window */
 		private void addPanel()
 		{
 			panel = new GateCScanInteractivelySwingControlPanel();
@@ -167,119 +163,120 @@ public class GateCScanInteractivelySwing implements PlugIn
 			pack();
 		}
 
-		/**
-		 * Respond to button press on front panel
-		 */
+		/* Respond to button press on front panel */
 		public void actionPerformed(ActionEvent e)
 		{
 			JButton source = (JButton)e.getSource();
-			autoStartSearchPoint = Integer.parseInt(panel.searchStartPointTextField.getText());
-			offsetPoint = Integer.parseInt(panel.offsetTextField.getText());
-			threshold = Float.parseFloat(panel.thresholdTextField.getText());
-			gateLength = Integer.parseInt(panel.gateLengthTextField.getText());
-			smoothingRadius = Double.parseDouble(panel.smoothingRadiusTextField.getText());
-			searchBackwards = panel.searchBackwardsCheckbox.isSelected();
-
-			if (source == panel.createGatesButton) {
-				panel.createGatesButton.setLabel("Working...");
-				short[] gatePositions = computeGateStartPositionsForStack(stack, autoStartSearchPoint, offsetPoint, threshold);
-				gateProcessor.setPixels(gatePositions);
-				gatesExist = true;
-				IJ.resetMinAndMax();
-				short[] gatePositionsForDisplayedSlice = Arrays.copyOfRange(gatePositions, (currentSlice - 1) * recordsPerFrame, currentSlice * recordsPerFrame);
-				drawSingleROI(WindowManager.getImage(inputImageID), gatePositionsForDisplayedSlice, gateLength, searchBackwards);
-				panel.createGatesButton.setLabel("Create gates");
-			}
-
-			if (source == panel.smoothGatesButton) {
-				if (gatesExist) {
-					filterSelection = panel.filterComboBox.getSelectedIndex();
-					switch (filterSelection) {
-						case MEDIAN: {
-							RankFilters rf = new RankFilters();
-							rf.rank(gateProcessor, smoothingRadius, RankFilters.MEDIAN);
-							break;
-						}
-						case GAUSSIAN: {
-							GaussianBlur gb = new GaussianBlur();
-							gb.blurGaussian(gateProcessor, smoothingRadius, smoothingRadius, 0.01);
-							break;
-						}
-						case MEAN: {
-							RankFilters rf = new RankFilters();
-							rf.rank(gateProcessor, smoothingRadius, RankFilters.MEAN);
-							break;
-						}
-						default:
-					}
-					gateImage.updateAndDraw();
-					IJ.resetMinAndMax();
-					short[] gatePositions = (short[]) gateProcessor.getPixels();
-					short[] gatePositionsForDisplayedSlice = Arrays.copyOfRange(gatePositions, (currentSlice - 1) * recordsPerFrame, currentSlice * recordsPerFrame);
-					drawSingleROI(WindowManager.getImage(inputImageID), gatePositionsForDisplayedSlice, gateLength, searchBackwards);
-				}
-			}
-
+			
 			if (source == panel.cancelButton) {
 				ImagePlus.removeImageListener(this);
 				this.close();
 				instance = null;
 			}
-
-			if (source == panel.okButton) {
-				if (gatesExist) {
-
-					/*
-					 * Assign user values to variables used to indicate
-					 * checkbox selections -- this is done only to ensure the
-					 * static variables are reinitialized to previous values
-					 * next time plugin is called
-					 */
-					searchBackwards = panel.searchBackwardsCheckbox.isSelected();
-					outputGateROIs = panel.outputGateROIsCheckbox.isSelected();
-					outputGatePositions = panel.outputGatePositionsCheckbox.isSelected();
-					outputGatedSegments = panel.outputGatedRegionsCheckbox.isSelected();
-					outputGatedWaveforms = panel.outputGatedWaveformsCheckbox.isSelected();
-
-					int selectedImageID = suitableImageIDs[panel.gateApplicationComboBox.getSelectedIndex()]; // apply gating to the desired image (not necessarily the image the gates were computed with)
-					short[] gatePositions = (short[])gateProcessor.getPixels();
-
-					if (outputGateROIs == true) {
-						RoiManager rm = RoiManager.getInstance();
-						if (rm == null) {
-							rm = new RoiManager();
+			
+			try {
+				autoStartSearchPoint = Integer.parseInt(panel.searchStartPointTextField.getText());
+				offsetPoint = Integer.parseInt(panel.offsetTextField.getText());
+				threshold = Float.parseFloat(panel.thresholdTextField.getText());
+				gateLength = Integer.parseInt(panel.gateLengthTextField.getText());
+				smoothingRadius = Double.parseDouble(panel.smoothingRadiusTextField.getText());
+				searchBackwards = panel.searchBackwardsCheckbox.isSelected();
+				
+				if (source == panel.createGatesButton) {
+					panel.createGatesButton.setText("Working...");
+					short[] gatePositions = computeGateStartPositionsForStack(stack, autoStartSearchPoint, offsetPoint, threshold);
+					gateProcessor.setPixels(gatePositions);
+					gatesExist = true;
+					IJ.resetMinAndMax();
+					short[] gatePositionsForDisplayedSlice = Arrays.copyOfRange(gatePositions, (currentSlice - 1) * recordsPerFrame, currentSlice * recordsPerFrame);
+					drawSingleROI(WindowManager.getImage(inputImageID), gatePositionsForDisplayedSlice, gateLength, searchBackwards);
+					panel.createGatesButton.setText("Create gates");
+				}
+				
+				if (source == panel.smoothGatesButton) {
+					if (gatesExist) {
+						filterSelection = panel.filterComboBox.getSelectedIndex();
+						switch (filterSelection) {
+							case MEDIAN: {
+								RankFilters rf = new RankFilters();
+								rf.rank(gateProcessor, smoothingRadius, RankFilters.MEDIAN);
+								break;
+							}
+							case GAUSSIAN: {
+								GaussianBlur gb = new GaussianBlur();
+								gb.blurGaussian(gateProcessor, smoothingRadius, smoothingRadius, 0.01);
+								break;
+							}
+							case MEAN: {
+								RankFilters rf = new RankFilters();
+								rf.rank(gateProcessor, smoothingRadius, RankFilters.MEAN);
+								break;
+							}
+							default:
 						}
-						for (int i = 0; i < WindowManager.getImage(inputImageID).getStackSize(); i++) {
-							WindowManager.getImage(inputImageID).setSlice(i + 1);
-							short[] gatePositionsForThisSlice = Arrays.copyOfRange(gatePositions, i * recordsPerFrame, (i + 1) * recordsPerFrame);
-							PolygonRoi roi = createSingleROI(gatePositionsForThisSlice, gateLength, searchBackwards);
-							rm.add(WindowManager.getImage(inputImageID), roi, -1);
-						}
-					}
-					if (outputGatedSegments == true) {
-						ImagePlus gatedImage = createGatedImage(WindowManager.getImage(selectedImageID), gatePositions, gateLength);
-						gatedImage.show();
+						gateImage.updateAndDraw();
 						IJ.resetMinAndMax();
-					}
-					if (outputGatePositions == true) {
-						ImagePlus borderImage = new ImagePlus(title + " gate positions", gateProcessor.duplicate());
-						borderImage.show();
-					}
-					if (outputGatedWaveforms == true) {
-						ImagePlus gatedWaveformImage = createdGatedWaveformImage(WindowManager.getImage(selectedImageID), gatePositions, gateLength);
-						gatedWaveformImage.show();
-						IJ.resetMinAndMax();
+						short[] gatePositions = (short[]) gateProcessor.getPixels();
+						short[] gatePositionsForDisplayedSlice = Arrays.copyOfRange(gatePositions, (currentSlice - 1) * recordsPerFrame, currentSlice * recordsPerFrame);
+						drawSingleROI(WindowManager.getImage(inputImageID), gatePositionsForDisplayedSlice, gateLength, searchBackwards);
 					}
 				}
-				ImagePlus.removeImageListener(this);
-				this.close();
-				instance = null;
+				
+				if (source == panel.okButton) {
+					if (gatesExist) {
+						/*
+						 * Assign user values to variables used to indicate
+						 * checkbox selections -- this is done only to ensure the
+						 * static variables are reinitialized to previous values
+						 * next time plugin is called
+						 */
+						searchBackwards = panel.searchBackwardsCheckbox.isSelected();
+						outputGateROIs = panel.outputGateROIsCheckbox.isSelected();
+						outputGatePositions = panel.outputGatePositionsCheckbox.isSelected();
+						outputGatedSegments = panel.outputGatedRegionsCheckbox.isSelected();
+						outputGatedWaveforms = panel.outputGatedWaveformsCheckbox.isSelected();
+						
+						int selectedImageID = suitableImageIDs[panel.gateApplicationComboBox.getSelectedIndex()]; // apply gating to the desired image (not necessarily the image the gates were computed with)
+						short[] gatePositions = (short[]) gateProcessor.getPixels();
+						
+						if (outputGateROIs == true) {
+							RoiManager rm = RoiManager.getInstance();
+							if (rm == null) {
+								rm = new RoiManager();
+							}
+							for (int i = 0; i < WindowManager.getImage(inputImageID).getStackSize(); i++) {
+								WindowManager.getImage(inputImageID).setSlice(i + 1);
+								short[] gatePositionsForThisSlice = Arrays.copyOfRange(gatePositions, i * recordsPerFrame, (i + 1) * recordsPerFrame);
+								PolygonRoi roi = createSingleROI(gatePositionsForThisSlice, gateLength, searchBackwards);
+								rm.add(WindowManager.getImage(inputImageID), roi, -1);
+							}
+						}
+						if (outputGatedSegments == true) {
+							ImagePlus gatedImage = createGatedImage(WindowManager.getImage(selectedImageID), gatePositions, gateLength);
+							gatedImage.show();
+							IJ.resetMinAndMax();
+						}
+						if (outputGatePositions == true) {
+							ImagePlus borderImage = new ImagePlus(title + " gate positions", gateProcessor.duplicate());
+							borderImage.show();
+						}
+						if (outputGatedWaveforms == true) {
+							ImagePlus gatedWaveformImage = createdGatedWaveformImage(WindowManager.getImage(selectedImageID), gatePositions, gateLength);
+							gatedWaveformImage.show();
+							IJ.resetMinAndMax();
+						}
+					}
+					ImagePlus.removeImageListener(this);
+					this.close();
+					instance = null;
+				}
+				
+			} catch (NumberFormatException nfe) {
+				IJ.error("Invalid input parameter");
 			}
 		}
 
-		/**
-		 * Respond to image being closed
-		 */
+		/* Respond to image being closed */
 		public void imageClosed(ImagePlus image)
 		{
 			if (image.getID() == inputImageID) {
@@ -300,9 +297,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 			}
 		}
 
-		/**
-		 * Respond to image being opened
-		 */
+		/* Respond to image being opened */
 		public void imageOpened(ImagePlus image)
 		{
 			suitableImageIDs = getSuitableImageIDs(inputImage, gateImage);
@@ -312,9 +307,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 			}
 		}
 
-		/**
-		 * Respond to current image being updated by scrolling through frames
-		 */
+		/* Respond to current image being updated by scrolling through frames */
 		public void imageUpdated(ImagePlus image)
 		{
 			if (image.getID() == inputImageID) {
@@ -331,9 +324,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 
 	}
 
-	/**
-	 * Create new ImagePlus from gated segments of input image
-	 */
+	/* Create new ImagePlus from gated segments of input image */
 	private ImagePlus createGatedImage(ImagePlus inputImage, short[] gateStartPositions, int gateLength)
 	{
 		int recordLength = inputImage.getWidth();
@@ -360,9 +351,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 		return gatedImage;
 	}
 
-	/**
-	 * Create new ImagePlus with gated full-length waveforms (zero-padded)
-	 */
+	/* Create new ImagePlus with gated full-length waveforms (zero-padded) */
 	private ImagePlus createdGatedWaveformImage(ImagePlus inputImage, short[] gateStartPositions, int gateLength)
 	{
 		int recordLength = inputImage.getWidth();
@@ -446,9 +435,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 		System.arraycopy(interpolatedGateStartPositions, 0, gateStartPositions, 0, gateStartPositions.length);
 	}
 	
-	/**
-	 * Computes gate start positions for entire stack
-	 */
+	/* Computes gate start positions for entire stack */
 	private short[] computeGateStartPositionsForStack(ImageStack stack, int searchStartPoint, int offsetPoint, float threshold)
 	{
 		int recordLength = stack.getWidth();
@@ -472,10 +459,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 		return gateStartPositions;
 	}
 
-	/**
-	 * Computes gate start positions for individual slice, assumed to be
-	 * represented by data in 'pixels'
-	 */
+	/* Computes gate start positions for individual slice, assumed to be represented by data in 'pixels' */
 	private short[] computeGateStartPositions(float[] pixels, int recordLength, int numberOfRecords, int searchStartPoint, int offsetPoint, float threshold)
 	{
 		float[] tempArray = new float[recordLength];
@@ -499,17 +483,13 @@ public class GateCScanInteractivelySwing implements PlugIn
 		return gateStartPositions;
 	}
 
-	/**
-	 * Draw single ROI onto current slice of input image
-	 */
+	/* Draw single ROI onto current slice of input image */
 	private void drawSingleROI(ImagePlus image, short[] gateStartPositions, int gateLength, boolean reverseSearch)
 	{
 		image.setRoi(createSingleROI(gateStartPositions, gateLength, reverseSearch));
 	}
 
-	/**
-	 * Create single ROI for current slice
-	 */
+	/* Create single ROI for current slice */
 	private PolygonRoi createSingleROI(short[] gateStartPositions, int gateLength, boolean reverseSearch)
 	{
 		int direction = reverseSearch ? -1 : 1;
@@ -525,10 +505,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 		return new PolygonRoi(new Polygon(xPoints, yPoints, length * 2), Roi.POLYGON);
 	}
 
-	/**
-	 * Returns the index of the first peak value found which exceeds the
-	 * specified threshold. Returns -1 if no peaks above threshold are detected.
-	 */
+	/* Returns the index of the first peak value found which exceeds the specified threshold. Returns -1 if no peaks above threshold are detected. */
 	private int peakDetect(float[] a, float threshold)
 	{
 		int i;
