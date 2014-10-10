@@ -151,7 +151,7 @@ public class MovingWindowZeroCrossings implements ExtendedPlugInFilter, DialogLi
 						index = -index;
 					}
 					float newFirstValue = currentWaveformCopy[index];
-					if (firstValue*newFirstValue < 0) {
+					if (firstValue*newFirstValue < 0.0f) {
 						count--;
 					}
 					firstValue = newFirstValue;
@@ -213,28 +213,54 @@ public class MovingWindowZeroCrossings implements ExtendedPlugInFilter, DialogLi
 				
 				// initialize copy of current waveform
 				double[] currentWaveformCopy = new double[recordLength];
-				for (int k=0; k<recordLength; k++) {
-					currentWaveformCopy[k] = waveforms[offset+k];
+				for (int j=0; j<recordLength; j++) {
+					currentWaveformCopy[j] = waveforms[offset+j];
 				}
 				
-				// move window and count zero-crossings
-				for (int j=0; j<recordLength; j++) {
-					
-					// initialize zero-crossing count
-					int count = 0;
-					
-					// count zero-crossings at the current index
-					for (int k=-radius; k<radius; k++) {
-						int index = j+k;
-						if (index < 0) {
-							index = -index;
-						} else if (index > recordLength-1) {
-							index = 2*(recordLength-1) - index;
-						}
-						if (currentWaveformCopy[index]*currentWaveformCopy[index+1] < 0.0) {
-							count++;
+				// initialize zero-crossing count when window is centered at array index 0
+				int count = 0;
+				int index;
+				for (int j = -radius; j < radius; j++) {
+					index = j;
+					int index1 = j+1;
+					if (index < 0) {
+						index = -index;
+						if (index1 < 0) {
+							index1 = -index1;
 						}
 					}
+					if (currentWaveformCopy[index] * currentWaveformCopy[index1] < 0.0) {
+						count++;
+					}
+				}
+				waveforms[offset] =  count;
+				double lastValue = currentWaveformCopy[radius];
+				double firstValue = lastValue; // reflect around boundary point
+				
+				// move window and count zero-crossings
+				for (int j=1; j<recordLength; j++) {
+					
+					// check if window moved past a zero crossing on the left
+					index = j-radius;
+					if (index < 0) {
+						index = -index;
+					}
+					double newFirstValue = currentWaveformCopy[index];
+					if (firstValue*newFirstValue < 0.0) {
+						count--;
+					}
+					firstValue = newFirstValue;
+					
+					// check if window moved over a new zero crossing on the right
+					index = j+radius;
+					if (index > recordLength-1) {
+						index = 2*(recordLength-1) - index;
+					}
+					double newLastValue = currentWaveformCopy[index];
+					if (lastValue*newLastValue < 0.0) {
+						count++;
+					}
+					lastValue = newLastValue;
 					
 					waveforms[offset+j] = count;
 					
