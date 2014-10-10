@@ -9,7 +9,6 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import java.awt.AWTEvent;
-import java.awt.TextField;
 import java.util.Arrays;
 
 
@@ -59,7 +58,7 @@ public class MovingWindowZeroCrossings implements ExtendedPlugInFilter, DialogLi
     public int showDialog(ImagePlus imp, String command, PlugInFilterRunner pfr)
     {
         this.pfr = pfr;
-        gd = new GenericDialog("Moving Window Weighted Average...");
+        gd = new GenericDialog("Moving Window Zero Crossings...");
 		gd.addNumericField("Radius", radius, 0);
         gd.addPreviewCheckbox(pfr);
         gd.addDialogListener(this);
@@ -123,24 +122,50 @@ public class MovingWindowZeroCrossings implements ExtendedPlugInFilter, DialogLi
 				// initialize copy of current waveform
 				float[] currentWaveformCopy = Arrays.copyOfRange(waveforms, offset, offset+recordLength);
 				
-				// move window and count zero-crossings
-				for (int j=0; j<recordLength; j++) {
-					
-					// initialize zero-crossing count
-					int count = 0;
-					
-					// finish computing the sum at the current index
-					for (int k=-radius; k<radius; k++) {
-						int index = j+k;
-						if (index < 0) {
-							index = -index;
-						} else if (index > recordLength-1) {
-							index = 2*(recordLength-1) - index;
-						}
-						if (currentWaveformCopy[index]*currentWaveformCopy[index+1] < 0.0f) {
-							count++;
+				// initialize zero-crossing count when window is centered at array index 0
+				int count = 0;
+				int index;
+				for (int j = -radius; j < radius; j++) {
+					index = j;
+					int index1 = j+1;
+					if (index < 0) {
+						index = -index;
+						if (index1 < 0) {
+							index1 = -index1;
 						}
 					}
+					if (currentWaveformCopy[index] * currentWaveformCopy[index1] < 0.0f) {
+						count++;
+					}
+				}
+				waveforms[offset] =  count;
+				float lastValue = currentWaveformCopy[radius];
+				float firstValue = lastValue; // reflect around boundary point
+				
+				// move window and count zero-crossings
+				for (int j=1; j<recordLength; j++) {
+					
+					// check if window moved past a zero crossing on the left
+					index = j-radius;
+					if (index < 0) {
+						index = -index;
+					}
+					float newFirstValue = currentWaveformCopy[index];
+					if (firstValue*newFirstValue < 0) {
+						count--;
+					}
+					firstValue = newFirstValue;
+					
+					// check if window moved over a new zero crossing on the right
+					index = j+radius;
+					if (index > recordLength-1) {
+						index = 2*(recordLength-1) - index;
+					}
+					float newLastValue = currentWaveformCopy[index];
+					if (lastValue*newLastValue < 0.0f) {
+						count++;
+					}
+					lastValue = newLastValue;
 					
 					waveforms[offset+j] = count;
 					
@@ -198,7 +223,7 @@ public class MovingWindowZeroCrossings implements ExtendedPlugInFilter, DialogLi
 					// initialize zero-crossing count
 					int count = 0;
 					
-					// finish computing the sum at the current index
+					// count zero-crossings at the current index
 					for (int k=-radius; k<radius; k++) {
 						int index = j+k;
 						if (index < 0) {
