@@ -1,24 +1,12 @@
 package waveformAnalysisForImageJ;
 
-import waveformAnalysisForImageJ.WaveformUtils;
 import ij.*;
 import ij.gui.*;
 import ij.plugin.filter.*;
 import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.process.*;
 import java.awt.*;
-import java.util.Arrays;
 
-/**
- * This plug-in applies a Butterworth filter to each horizontal line in an
- * image. It works on arbitrarily-sized array lengths, by zero-padding up to the
- * next power of 2 and implementing a traditional efficient FFT routine. The
- * filtered padded waveforms are truncated to the original length, and written
- * over the original data.
- *
- * @author Jon N. Marsh
- * @version 2013-11-08
- */
 
 
 

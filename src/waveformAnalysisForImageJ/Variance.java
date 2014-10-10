@@ -1,6 +1,5 @@
 package waveformAnalysisForImageJ;
 
-import waveformAnalysisForImageJ.WaveformUtils;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;

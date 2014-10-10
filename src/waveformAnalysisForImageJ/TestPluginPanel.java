@@ -1,6 +1,5 @@
 package waveformAnalysisForImageJ;
 
-import waveformAnalysisForImageJ.WaveformUtils;
 import ij.*;
 import ij.gui.*;
 import ij.plugin.filter.*;
