@@ -1609,4 +1609,97 @@ public class WaveformUtilsTest
 		
 	}
 	
+	/**
+	 * Test of quadraticRoots method, of class WaveformUtils.
+	 */
+	@Test
+	public void testQuadraticRoots()
+	{
+		System.out.println("quadraticRoots");
+		double a = 0.0;
+		double b = 0.0;
+		double c = 0.0;
+		double[] expResult = null;
+		double[] result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+		
+		a = 4.0;
+		b = -20.0;
+		c = 26.0;
+		expResult = null;
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 4.0;
+		b = -20.0;
+		c = 25.0;
+		expResult = new double[] {2.5};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 4.0;
+		b = -20.0;
+		c = 21.0;
+		expResult = new double[] {1.5, 3.5};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 4.0;
+		b = 7.0;
+		c = 0.0;
+		expResult = new double[] {-1.75, 0.0};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 5.0;
+		b = 0.0;
+		c = -20.0;
+		expResult = new double[] {-2.0, 2.0};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 0.0;
+		b = 3.0;
+		c = -21.0;
+		expResult = new double[] {7.0};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 0.0;
+		b = 0.0;
+		c = 1.0;
+		expResult = null;
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 1.0;
+		b = 0.0;
+		c = 0.0;
+		expResult = new double[] {0.0};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 1.0;
+		b = 200.0;
+		c = -0.000015;
+		expResult = new double[] {-200.000000075, 0.000000075};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 1.0;
+		b = -1.786737601482363;
+		c = 2.054360090947453e-8;
+		expResult = new double[] {1.149782767465722e-8, 1.786737589984535};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(2.0));
+
+		a = 94906265.625;
+		b = -189812534.0;
+		c = 94906268.375;
+		expResult = new double[] {1.0, 1.000000028975958};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		System.out.println(Arrays.toString(result));
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+	}
 }
