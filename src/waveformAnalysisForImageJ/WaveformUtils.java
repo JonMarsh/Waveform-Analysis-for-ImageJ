@@ -1,6 +1,5 @@
 package waveformAnalysisForImageJ;
 
-
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
@@ -14,6 +13,7 @@ import java.util.Arrays;
  */
 public class WaveformUtils
 {
+
 	/**
 	 * Private constructor
 	 */
@@ -26,35 +26,36 @@ public class WaveformUtils
 	 */
 	public static enum WindowType
 	{
-		BLACKMAN ("Blackman", false, ""), 
-		BLACKMAN_HARRIS ("Blackman-Harris", false, ""), 
-		BLACKMAN_NUTTALL ("Blackman-Nuttall", false, "") , 
-		BOHMAN ("Bohman", false, ""), 
-		COSINE_TAPERED ("Cosine tapered (Tukey)", true, "Tapered section ratio"), 
-		EXACT_BLACKMAN ("Exact Blackman", false, ""),
-		EXPONENTIAL ("Exponential", true, "Endpoint weight value"), 
-		FLAT_TOP ("Flat top", false, ""),
-		GAUSSIAN ("Gaussian", true, "Standard deviation"),
-		HAMMING ("Hamming", false, ""),
-		HANNING ("Hanning", false, ""),
-		KAISER ("Kaiser-Bessel", true, "Attenuation parameter (beta)"),
-		MODIFIED_BARTLETT_HANNING ("Modified Bartlett-Hanning", false, ""),
-		PARZEN ("Parzen", false, ""),
-		RECTANGLE ("Rectangle", false, ""),
-		TRIANGLE ("Triangle", false, ""), 
-		WELCH ("Welch", false, "");
-		
+
+		BLACKMAN("Blackman", false, ""),
+		BLACKMAN_HARRIS("Blackman-Harris", false, ""),
+		BLACKMAN_NUTTALL("Blackman-Nuttall", false, ""),
+		BOHMAN("Bohman", false, ""),
+		COSINE_TAPERED("Cosine tapered (Tukey)", true, "Tapered section ratio"),
+		EXACT_BLACKMAN("Exact Blackman", false, ""),
+		EXPONENTIAL("Exponential", true, "Endpoint weight value"),
+		FLAT_TOP("Flat top", false, ""),
+		GAUSSIAN("Gaussian", true, "Standard deviation"),
+		HAMMING("Hamming", false, ""),
+		HANNING("Hanning", false, ""),
+		KAISER("Kaiser-Bessel", true, "Attenuation parameter (beta)"),
+		MODIFIED_BARTLETT_HANNING("Modified Bartlett-Hanning", false, ""),
+		PARZEN("Parzen", false, ""),
+		RECTANGLE("Rectangle", false, ""),
+		TRIANGLE("Triangle", false, ""),
+		WELCH("Welch", false, "");
+
 		private final String stringValue;
 		private final boolean takesParameter;
 		private final String paramDescription;
-		
-		private WindowType(String stringValue, boolean takesParameter, String paramDescription) 
+
+		private WindowType(String stringValue, boolean takesParameter, String paramDescription)
 		{
 			this.stringValue = stringValue;
 			this.takesParameter = takesParameter;
 			this.paramDescription = paramDescription;
 		}
-		
+
 		/**
 		 * Static method for retrieving array of nicely formatted names of all
 		 * elements.
@@ -64,16 +65,16 @@ public class WaveformUtils
 		 */
 		public static String[] stringValues()
 		{
-		    WindowType[] w = WindowType.values();
-		    String[] s = new String[w.length];
-		    
-		    for (int i=0; i<w.length; i++) {
-		        s[i] = w[i].toString();
-		    }
-		    
-		    return s;
+			WindowType[] w = WindowType.values();
+			String[] s = new String[w.length];
+
+			for (int i = 0; i < w.length; i++) {
+				s[i] = w[i].toString();
+			}
+
+			return s;
 		}
-		
+
 		/**
 		 *
 		 * @return {@code true} if the window function takes a parameter,
@@ -104,10 +105,9 @@ public class WaveformUtils
 		{
 			return stringValue;
 		}
-		
+
 	}
-	
-	
+
 	//--------------------addScalar Methods-----------------------------------//
 	/**
 	 * Adds the specified value to each element in the input array and returns
@@ -351,7 +351,7 @@ public class WaveformUtils
 		for (int i = from; i < to; i++) {
 			sum += a[i];
 		}
-		return (float)(sum / (to - from));
+		return (float) (sum / (to - from));
 	}
 
 	/**
@@ -366,11 +366,10 @@ public class WaveformUtils
 	}
 
 	//--------------------meanAndVariance Methods-----------------------------//
-	
 	/**
 	 * Computes the mean and variance of the input array and returns the result
 	 * as a two-element double array: {@code {mean, variance}}, using a
-	 * numerically stable algorithm described by 
+	 * numerically stable algorithm described by
 	 * <a href="http://www.jstor.org/stable/1266577">Welford</a>.
 	 *
 	 * @param a	                  input array
@@ -388,13 +387,14 @@ public class WaveformUtils
 	 * Computes the mean and variance of the specified range of an array and
 	 * returns the result as a two-element double array:
 	 * {@code {mean, variance}}, using a numerically stable algorithm described
-	 * by <a href="http://www.jstor.org/stable/1266577">Welford</a>. No 
-	 * error checking is performed on range limits; if the values are negative 
-	 * or outside the range of the array, unexpected results may occur or a 
-	 * runtime exception may be thrown.
+	 * by <a href="http://www.jstor.org/stable/1266577">Welford</a>. No error
+	 * checking is performed on range limits; if the values are negative or
+	 * outside the range of the array, unexpected results may occur or a runtime
+	 * exception may be thrown.
 	 *
 	 * @param a	                  input array
-	 * @param useUnbiasedEstimate set to true to return unbiased estimate of variance
+	 * @param useUnbiasedEstimate set to true to return unbiased estimate of
+	 *                            variance
 	 * @param from                initial index of the range to compute the mean
 	 *                            and variance, inclusive
 	 * @param to                  final index of the range to compute the mean
@@ -417,14 +417,14 @@ public class WaveformUtils
 			m2 += delta * (x - mean);
 		}
 
-		double norm = useUnbiasedEstimate ? 1.0/(n-1) : 1.0/n ;
-		return new double[]{mean, m2*norm};
+		double norm = useUnbiasedEstimate ? 1.0 / (n - 1) : 1.0 / n;
+		return new double[]{mean, m2 * norm};
 	}
 
 	/**
 	 * Computes the mean and variance of the input array and returns the result
 	 * as a two-element double array: {@code {mean, variance}}, using a
-	 * numerically stable algorithm described by 
+	 * numerically stable algorithm described by
 	 * <a href="http://www.jstor.org/stable/1266577">Welford</a>.
 	 *
 	 * @param a	                  input array
@@ -433,7 +433,6 @@ public class WaveformUtils
 	 * @return two-element array whose first value is the mean of the input
 	 *         array and second value is the variance
 	 */
-
 	public static final double[] meanAndVariance(float[] a, boolean useUnbiasedEstimate)
 	{
 		return meanAndVariance(a, useUnbiasedEstimate, 0, a.length);
@@ -443,10 +442,10 @@ public class WaveformUtils
 	 * Computes the mean and variance of the specified range of an array and
 	 * returns the result as a two-element double array:
 	 * {@code {mean, variance}}, using a numerically stable algorithm described
-	 * by <a href="http://www.jstor.org/stable/1266577">Welford</a>. No 
-	 * error checking is performed on range limits; if the values are negative 
-	 * or outside the range of the array, unexpected results may occur or a 
-	 * runtime exception may be thrown.
+	 * by <a href="http://www.jstor.org/stable/1266577">Welford</a>. No error
+	 * checking is performed on range limits; if the values are negative or
+	 * outside the range of the array, unexpected results may occur or a runtime
+	 * exception may be thrown.
 	 *
 	 * @param a	                  input array
 	 * @param useUnbiasedEstimate normalize by {@code n-1} instead of {@code n}
@@ -472,8 +471,8 @@ public class WaveformUtils
 			m2 += delta * (x - mean);
 		}
 
-		double norm = useUnbiasedEstimate ? 1.0/(n-1) : 1.0/n ;
-		return new double[]{mean, m2*norm};
+		double norm = useUnbiasedEstimate ? 1.0 / (n - 1) : 1.0 / n;
+		return new double[]{mean, m2 * norm};
 	}
 
 	//--------------------median Methods--------------------------------------//
@@ -531,8 +530,8 @@ public class WaveformUtils
 	 * array length is even, the value returned is equal to the average of the
 	 * middle two values of the sorted array. {@code null} input returns
 	 * {@code Double.NaN}. Because no array copying is performed, this may yield
-	 * slight performance improvements over {@link #median(double[]) median} if the input array
-	 * reordering is unimportant.
+	 * slight performance improvements over {@link #median(double[]) median} if
+	 * the input array reordering is unimportant.
 	 *
 	 * @param a	input array; array is sorted in place
 	 * @return median value of {@code a} or {@code NaN} if {@code a} is
@@ -613,8 +612,8 @@ public class WaveformUtils
 	 * array length is even, the value returned is equal to the average of the
 	 * middle two values of the sorted array. {@code null} input returns
 	 * {@code Double.NaN}. Because no array copying is performed, this may yield
-	 * slight performance improvements over {@link #median(float[]) median} if the input array
-	 * reordering is unimportant.
+	 * slight performance improvements over {@link #median(float[]) median} if
+	 * the input array reordering is unimportant.
 	 *
 	 * @param a	input array; array is sorted in place
 	 * @return median value of {@code a} or {@code NaN} if {@code a} is
@@ -736,50 +735,50 @@ public class WaveformUtils
 		}
 	}
 
-	public static final double[] fftRealPowerOf2Forward(double ar[])	
+	public static final double[] fftRealPowerOf2Forward(double ar[])
 	{
 		int nn = ar.length;
-		int n = nn/2;
-		
+		int n = nn / 2;
+
 		// initialize real and imaginary arrays with even and odd element indices of input real array
 		double[] re = new double[n];
 		double[] im = new double[n];
-		for (int i=0; i<n; i++) {
-			int j = 2*i;
+		for (int i = 0; i < n; i++) {
+			int j = 2 * i;
 			re[i] = ar[j];
 			im[i] = ar[j + 1];
 		}
-		
+
 		// perform forward FFT using first half of real and imaginary parts
 		fftComplexPowerOf2(re, im, true);
-		
+
 		// initialize output imaginary array
 		double[] ai = new double[nn];
-		
+
 		// sort
-		double delta = Math.PI/n;
+		double delta = Math.PI / n;
 		double arg = delta;
-		for (int i=1; i<n; i++) {
+		for (int i = 1; i < n; i++) {
 			double c = Math.cos(arg);
 			double s = Math.sin(arg);
 			double a1 = re[i] + re[n - i];
 			double a2 = re[i] - re[n - i];
 			double b1 = im[i] + im[n - i];
 			double b2 = im[i] - im[n - i];
-			
-			ar[i] = 0.5*(a1 + c*b1 - s*a2);
+
+			ar[i] = 0.5 * (a1 + c * b1 - s * a2);
 			ar[nn - i] = ar[i];
-			ai[i] = 0.5*(b2 - s*b1 - c*a2);
+			ai[i] = 0.5 * (b2 - s * b1 - c * a2);
 			ai[nn - i] = -ai[i];
-			
+
 			arg += delta;
 		}
 		ar[n] = ar[0] = re[0] + im[0];
 		ai[n] = ai[0] = 0.0;
-		
+
 		return ai;
 	}
-	
+
 	//--------------------hilbertTransform Methods----------------------------//
 	/**
 	 * Computes discrete Hilbert transform of the input array (in place) using
@@ -795,35 +794,35 @@ public class WaveformUtils
 	public static final void fastHilbertTransformPowerOf2(double[] a, boolean isForward)
 	{
 		int n = a.length;
-		int nOver2 = n/2;
+		int nOver2 = n / 2;
 		double c = isForward ? 1.0 : -1.0;
-		
+
 		// create zero-valued imaginary component
 		double[] aIm = new double[n];
-		
+
 		// perform FFT
 		fftComplexPowerOf2(a, aIm, true);
-		
+
 		// zero out DC and Nyquist components
 		a[0] = aIm[0] = a[nOver2] = aIm[nOver2] = 0.0;
-		
+
 		// multiply positive frequency components by -I
-		for (int i=1; i<nOver2; i++) {
+		for (int i = 1; i < nOver2; i++) {
 			double temp = a[i];
-			a[i] = c*aIm[i];
-			aIm[i] = -c*temp;
+			a[i] = c * aIm[i];
+			aIm[i] = -c * temp;
 		}
-		
+
 		// multiply negative frequency components by I
-		for (int i=nOver2+1; i<n; i++) {
+		for (int i = nOver2 + 1; i < n; i++) {
 			double temp = a[i];
-			a[i] = -c*aIm[i];
-			aIm[i] = c*temp;
+			a[i] = -c * aIm[i];
+			aIm[i] = c * temp;
 		}
-		
+
 		fftComplexPowerOf2(a, aIm, false);
 	}
-	
+
 	//--------------------power-of-2 Methods----------------------------------//
 	/**
 	 * Determines if an integer is a positive integral power of 2.
@@ -995,9 +994,11 @@ public class WaveformUtils
 	 * and {@code to} (exclusive) in place. No error checking is performed on
 	 * range limits; if input parameters are invalid, runtime errors may occur.
 	 *
-	 * @param a input array
-	 * @param from initial index of the range in which to reverse elements, inclusive
-	 * @param to final index of the range in which to reverse elements, exclusive
+	 * @param a    input array
+	 * @param from initial index of the range in which to reverse elements,
+	 *             inclusive
+	 * @param to   final index of the range in which to reverse elements,
+	 *             exclusive
 	 */
 	public static final void reverseArrayInPlace(double[] a, int from, int to)
 	{
@@ -1026,9 +1027,11 @@ public class WaveformUtils
 	 * and {@code to} (exclusive) in place. No error checking is performed on
 	 * range limits; if input parameters are invalid, runtime errors may occur.
 	 *
-	 * @param a input array
-	 * @param from initial index of the range in which to reverse elements, inclusive
-	 * @param to final index of the range in which to reverse elements, exclusive
+	 * @param a    input array
+	 * @param from initial index of the range in which to reverse elements,
+	 *             inclusive
+	 * @param to   final index of the range in which to reverse elements,
+	 *             exclusive
 	 */
 	public static final void reverseArrayInPlace(float[] a, int from, int to)
 	{
@@ -1057,9 +1060,11 @@ public class WaveformUtils
 	 * and {@code to} (exclusive) in place. No error checking is performed on
 	 * range limits; if input parameters are invalid, runtime errors may occur.
 	 *
-	 * @param a input array
-	 * @param from initial index of the range in which to reverse elements, inclusive
-	 * @param to final index of the range in which to reverse elements, exclusive
+	 * @param a    input array
+	 * @param from initial index of the range in which to reverse elements,
+	 *             inclusive
+	 * @param to   final index of the range in which to reverse elements,
+	 *             exclusive
 	 */
 	public static final void reverseArrayInPlace(int[] a, int from, int to)
 	{
@@ -1098,10 +1103,12 @@ public class WaveformUtils
 	 * performed if {@code a} is {@code null} or zero-length, if
 	 * {@code to-from<=0}, or if {@code abs(n)<0}.
 	 *
-	 * @param a	input array
-	 * @param n number of places to shift
-	 * @param from initial index of the range in which to rotate elements, inclusive
-	 * @param to final index of the range in which to rotate elements, exclusive
+	 * @param a	   input array
+	 * @param n    number of places to shift
+	 * @param from initial index of the range in which to rotate elements,
+	 *             inclusive
+	 * @param to   final index of the range in which to rotate elements,
+	 *             exclusive
 	 */
 	public static final void rotateArrayInPlace(double[] a, int n, int from, int to)
 	{
@@ -1392,7 +1399,6 @@ public class WaveformUtils
 	}
 
 	//--------------------smoothingSpline Methods-----------------------------//
-
 	/**
 	 * Computes interpolant values for input values {@code y[]} evaluated at
 	 * points {@code x[]} using the method described by Reinsch in Numerische
@@ -1436,7 +1442,7 @@ public class WaveformUtils
 		n1 = 1;
 		n2 = n;
 
-		s = smoothingParameter*n; // This is to make Reinsch's "S" correspond with Igor Pro's "s"
+		s = smoothingParameter * n; // This is to make Reinsch's "S" correspond with Igor Pro's "s"
 
 		shiftedX = new double[n + 2];
 		System.arraycopy(x, 0, shiftedX, 1, n);
@@ -1471,83 +1477,85 @@ public class WaveformUtils
 		m1 = n1 + 1;
 		m2 = n2 - 1;
 		h = shiftedX[m1] - shiftedX[n1];
-		f = (shiftedY[m1] - shiftedY[n1])/h;
+		f = (shiftedY[m1] - shiftedY[n1]) / h;
 
-		for (i=m1; i<=m2; i++) {
+		for (i = m1; i <= m2; i++) {
 			g = h;
-			h = shiftedX[i+1] - shiftedX[i];
+			h = shiftedX[i + 1] - shiftedX[i];
 			e = f;
-			f = (shiftedY[i+1] - shiftedY[i])/h;
+			f = (shiftedY[i + 1] - shiftedY[i]) / h;
 			a[i] = f - e;
-			t[i] = 2.0*(g+h)/3.0;
-			t1[i] = h/3.0;
-			r2[i] = standardDeviation/g;
-			r[i] = standardDeviation/h;
-			r1[i] = -standardDeviation/g - standardDeviation/h;
+			t[i] = 2.0 * (g + h) / 3.0;
+			t1[i] = h / 3.0;
+			r2[i] = standardDeviation / g;
+			r[i] = standardDeviation / h;
+			r1[i] = -standardDeviation / g - standardDeviation / h;
 		}
-		
-		for (i=m1; i<=m2; i++) {
-			b[i] = r[i]*r[i] + r1[i]*r1[i] + r2[i]*r2[i];
-			c[i] = r[i]*r1[i+1] + r1[i]*r2[i+1];
-			d[i] = r[i]*r2[i+2];
+
+		for (i = m1; i <= m2; i++) {
+			b[i] = r[i] * r[i] + r1[i] * r1[i] + r2[i] * r2[i];
+			c[i] = r[i] * r1[i + 1] + r1[i] * r2[i + 1];
+			d[i] = r[i] * r2[i + 2];
 		}
 
 		f2 = -s;
 
 		for (;;) {
-			for (i=m1; i<=m2; i++) {
-				r1[i-1] = f*r[i-1];
-				r2[i-2] = g*r[i-2];
-				r[i] = 1.0/(p*b[i]+t[i]-f*r1[i-1]-g*r2[i-2]);
-				u[i] = a[i]-r1[i-1]*u[i-1]-r2[i-2]*u[i-2];
-				f = p*c[i]+t1[i]-h*r1[i-1];
+			for (i = m1; i <= m2; i++) {
+				r1[i - 1] = f * r[i - 1];
+				r2[i - 2] = g * r[i - 2];
+				r[i] = 1.0 / (p * b[i] + t[i] - f * r1[i - 1] - g * r2[i - 2]);
+				u[i] = a[i] - r1[i - 1] * u[i - 1] - r2[i - 2] * u[i - 2];
+				f = p * c[i] + t1[i] - h * r1[i - 1];
 				g = h;
-				h = d[i]*p;
+				h = d[i] * p;
 			}
-			for (i=m2; i>=m1; i--) {
-				u[i] = r[i]*u[i]-r1[i]*u[i+1]-r2[i]*u[i+2];
+			for (i = m2; i >= m1; i--) {
+				u[i] = r[i] * u[i] - r1[i] * u[i + 1] - r2[i] * u[i + 2];
 			}
 			e = 0;
 			h = 0;
-			for (i=n1; i<=m2; i++) {
+			for (i = n1; i <= m2; i++) {
 				g = h;
-				h = (u[i+1]-u[i])/(shiftedX[i+1]-shiftedX[i]);
-				v[i] = (h-g)*standardDeviation*standardDeviation;
-				e += v[i]*(h-g);
+				h = (u[i + 1] - u[i]) / (shiftedX[i + 1] - shiftedX[i]);
+				v[i] = (h - g) * standardDeviation * standardDeviation;
+				e += v[i] * (h - g);
 			}
-			g = v[n2] = -h*standardDeviation*standardDeviation;
-			e -= g*h;
+			g = v[n2] = -h * standardDeviation * standardDeviation;
+			e -= g * h;
 			g = f2;
-			f2 = e*p*p;
+			f2 = e * p * p;
 
-			if (f2 >= s || f2 <= g)
+			if (f2 >= s || f2 <= g) {
 				break;
+			}
 
 			f = 0;
-			h = (v[m1]-v[n1])/(shiftedX[m1]-shiftedX[n1]);
-			for (i=m1; i<=m2; i++) {
+			h = (v[m1] - v[n1]) / (shiftedX[m1] - shiftedX[n1]);
+			for (i = m1; i <= m2; i++) {
 				g = h;
-				h = (v[i+1]-v[i])/(shiftedX[i+1]-shiftedX[i]);
-				g = h-g-r1[i-1]*r[i-1]-r2[i-2]*r[i-2];
-				f += g*r[i]*g;
+				h = (v[i + 1] - v[i]) / (shiftedX[i + 1] - shiftedX[i]);
+				g = h - g - r1[i - 1] * r[i - 1] - r2[i - 2] * r[i - 2];
+				f += g * r[i] * g;
 				r[i] = g;
 			}
-			h = e-p*f;
-			
-			if (h<=0.0)
+			h = e - p * f;
+
+			if (h <= 0.0) {
 				break;
-	
-			p += (s-f2)/((Math.sqrt(s/e)+p)*h);
+			}
+
+			p += (s - f2) / ((Math.sqrt(s / e) + p) * h);
 		}
-		
-		for (i=n1; i<=n2; i++) {
-			a[i] = shiftedY[i]-p*v[i];
+
+		for (i = n1; i <= n2; i++) {
+			a[i] = shiftedY[i] - p * v[i];
 			c[i] = u[i];
 		}
-		for (i=n1; i<=m2; i++) {
-			h = shiftedX[i+1] - shiftedX[i];
-			d[i] = (c[i+1]-c[i])/(3.0*h);
-			b[i] = (a[i+1]-a[i])/h - (h*d[i]+c[i])*h;
+		for (i = n1; i <= m2; i++) {
+			h = shiftedX[i + 1] - shiftedX[i];
+			d[i] = (c[i + 1] - c[i]) / (3.0 * h);
+			b[i] = (a[i + 1] - a[i]) / h - (h * d[i] + c[i]) * h;
 		}
 
 		output = new double[4][n];
@@ -1602,13 +1610,13 @@ public class WaveformUtils
 		n1 = 1;
 		n2 = n;
 
-		s = smoothingParameter*n; // This is to make Reinsch's "S" correspond with Igor Pro's "s"
+		s = smoothingParameter * n; // This is to make Reinsch's "S" correspond with Igor Pro's "s"
 
 		shiftedX = new double[n + 2];
 		shiftedY = new double[n + 2];
-		for (int j=0; j<n; j++) {
-			shiftedX[j+1] = x[j];
-			shiftedY[j+1] = y[j];
+		for (int j = 0; j < n; j++) {
+			shiftedX[j + 1] = x[j];
+			shiftedY[j + 1] = y[j];
 		}
 
 		r = new double[n + 2];
@@ -1639,83 +1647,85 @@ public class WaveformUtils
 		m1 = n1 + 1;
 		m2 = n2 - 1;
 		h = shiftedX[m1] - shiftedX[n1];
-		f = (shiftedY[m1] - shiftedY[n1])/h;
+		f = (shiftedY[m1] - shiftedY[n1]) / h;
 
-		for (i=m1; i<=m2; i++) {
+		for (i = m1; i <= m2; i++) {
 			g = h;
-			h = shiftedX[i+1] - shiftedX[i];
+			h = shiftedX[i + 1] - shiftedX[i];
 			e = f;
-			f = (shiftedY[i+1] - shiftedY[i])/h;
+			f = (shiftedY[i + 1] - shiftedY[i]) / h;
 			a[i] = f - e;
-			t[i] = 2.0*(g+h)/3.0;
-			t1[i] = h/3.0;
-			r2[i] = standardDeviation/g;
-			r[i] = standardDeviation/h;
-			r1[i] = -standardDeviation/g - standardDeviation/h;
+			t[i] = 2.0 * (g + h) / 3.0;
+			t1[i] = h / 3.0;
+			r2[i] = standardDeviation / g;
+			r[i] = standardDeviation / h;
+			r1[i] = -standardDeviation / g - standardDeviation / h;
 		}
-		
-		for (i=m1; i<=m2; i++) {
-			b[i] = r[i]*r[i] + r1[i]*r1[i] + r2[i]*r2[i];
-			c[i] = r[i]*r1[i+1] + r1[i]*r2[i+1];
-			d[i] = r[i]*r2[i+2];
+
+		for (i = m1; i <= m2; i++) {
+			b[i] = r[i] * r[i] + r1[i] * r1[i] + r2[i] * r2[i];
+			c[i] = r[i] * r1[i + 1] + r1[i] * r2[i + 1];
+			d[i] = r[i] * r2[i + 2];
 		}
 
 		f2 = -s;
 
 		for (;;) {
-			for (i=m1; i<=m2; i++) {
-				r1[i-1] = f*r[i-1];
-				r2[i-2] = g*r[i-2];
-				r[i] = 1.0/(p*b[i]+t[i]-f*r1[i-1]-g*r2[i-2]);
-				u[i] = a[i]-r1[i-1]*u[i-1]-r2[i-2]*u[i-2];
-				f = p*c[i]+t1[i]-h*r1[i-1];
+			for (i = m1; i <= m2; i++) {
+				r1[i - 1] = f * r[i - 1];
+				r2[i - 2] = g * r[i - 2];
+				r[i] = 1.0 / (p * b[i] + t[i] - f * r1[i - 1] - g * r2[i - 2]);
+				u[i] = a[i] - r1[i - 1] * u[i - 1] - r2[i - 2] * u[i - 2];
+				f = p * c[i] + t1[i] - h * r1[i - 1];
 				g = h;
-				h = d[i]*p;
+				h = d[i] * p;
 			}
-			for (i=m2; i>=m1; i--) {
-				u[i] = r[i]*u[i]-r1[i]*u[i+1]-r2[i]*u[i+2];
+			for (i = m2; i >= m1; i--) {
+				u[i] = r[i] * u[i] - r1[i] * u[i + 1] - r2[i] * u[i + 2];
 			}
 			e = 0;
 			h = 0;
-			for (i=n1; i<=m2; i++) {
+			for (i = n1; i <= m2; i++) {
 				g = h;
-				h = (u[i+1]-u[i])/(shiftedX[i+1]-shiftedX[i]);
-				v[i] = (h-g)*standardDeviation*standardDeviation;
-				e += v[i]*(h-g);
+				h = (u[i + 1] - u[i]) / (shiftedX[i + 1] - shiftedX[i]);
+				v[i] = (h - g) * standardDeviation * standardDeviation;
+				e += v[i] * (h - g);
 			}
-			g = v[n2] = -h*standardDeviation*standardDeviation;
-			e -= g*h;
+			g = v[n2] = -h * standardDeviation * standardDeviation;
+			e -= g * h;
 			g = f2;
-			f2 = e*p*p;
+			f2 = e * p * p;
 
-			if (f2 >= s || f2 <= g)
+			if (f2 >= s || f2 <= g) {
 				break;
+			}
 
 			f = 0;
-			h = (v[m1]-v[n1])/(shiftedX[m1]-shiftedX[n1]);
-			for (i=m1; i<=m2; i++) {
+			h = (v[m1] - v[n1]) / (shiftedX[m1] - shiftedX[n1]);
+			for (i = m1; i <= m2; i++) {
 				g = h;
-				h = (v[i+1]-v[i])/(shiftedX[i+1]-shiftedX[i]);
-				g = h-g-r1[i-1]*r[i-1]-r2[i-2]*r[i-2];
-				f += g*r[i]*g;
+				h = (v[i + 1] - v[i]) / (shiftedX[i + 1] - shiftedX[i]);
+				g = h - g - r1[i - 1] * r[i - 1] - r2[i - 2] * r[i - 2];
+				f += g * r[i] * g;
 				r[i] = g;
 			}
-			h = e-p*f;
-			
-			if (h<=0.0)
+			h = e - p * f;
+
+			if (h <= 0.0) {
 				break;
-	
-			p += (s-f2)/((Math.sqrt(s/e)+p)*h);
+			}
+
+			p += (s - f2) / ((Math.sqrt(s / e) + p) * h);
 		}
-		
-		for (i=n1; i<=n2; i++) {
-			a[i] = shiftedY[i]-p*v[i];
+
+		for (i = n1; i <= n2; i++) {
+			a[i] = shiftedY[i] - p * v[i];
 			c[i] = u[i];
 		}
-		for (i=n1; i<=m2; i++) {
-			h = shiftedX[i+1] - shiftedX[i];
-			d[i] = (c[i+1]-c[i])/(3.0*h);
-			b[i] = (a[i+1]-a[i])/h - (h*d[i]+c[i])*h;
+		for (i = n1; i <= m2; i++) {
+			h = shiftedX[i + 1] - shiftedX[i];
+			d[i] = (c[i + 1] - c[i]) / (3.0 * h);
+			b[i] = (a[i + 1] - a[i]) / h - (h * d[i] + c[i]) * h;
 		}
 
 		output = new double[4][n];
@@ -1726,23 +1736,22 @@ public class WaveformUtils
 
 		return output;
 	}
-	
+
 	/**
-	 * Computes interpolant values for input array {@code y[]} using
-	 * the method described by Reinsch in Numerische Mathematik 10, 177-183
-	 * (1967). This method is called once, and the resulting interpolant values
-	 * can be used to compute interpolated points of {@code y[]} at any fractional
-	 * index between {@code 0} and {@code y.length}. The spline is a natural
-	 * spline, e.g. the second derivative is zero at the endpoints. The
-	 * smoothing spline reverts to a simple cubic spline when
-	 * {@code smoothingParameter=0}. For smoothing splines, setting
-	 * {@code smoothingParameter=1.0} is usually a good choice. Very large
-	 * values for {@code smoothingParameter} yield a straight-line fit to the
-	 * input data. {@code standardDeviation} is typically a measure of the
-	 * standard deviation of the system noise or the variation of the part of
-	 * the signal that should be "smoothed out" by the smoothing spline
-	 * algorithm. {@code y[]} is assumed to have uniform spacing between elements,
-	 * given by {@code dx}.
+	 * Computes interpolant values for input array {@code y[]} using the method
+	 * described by Reinsch in Numerische Mathematik 10, 177-183 (1967). This
+	 * method is called once, and the resulting interpolant values can be used
+	 * to compute interpolated points of {@code y[]} at any fractional index
+	 * between {@code 0} and {@code y.length}. The spline is a natural spline,
+	 * e.g. the second derivative is zero at the endpoints. The smoothing spline
+	 * reverts to a simple cubic spline when {@code smoothingParameter=0}. For
+	 * smoothing splines, setting {@code smoothingParameter=1.0} is usually a
+	 * good choice. Very large values for {@code smoothingParameter} yield a
+	 * straight-line fit to the input data. {@code standardDeviation} is
+	 * typically a measure of the standard deviation of the system noise or the
+	 * variation of the part of the signal that should be "smoothed out" by the
+	 * smoothing spline algorithm. {@code y[]} is assumed to have uniform
+	 * spacing between elements, given by {@code dx}.
 	 *
 	 * @param y	                 input array
 	 * @param standardDeviation	 standard deviation of the noisy parts of
@@ -1753,10 +1762,10 @@ public class WaveformUtils
 	 *                           negative value will result in zero values for
 	 *                           all interpolant coefficients
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
-	 *         the first element is an array of smoothed values of
-	 *         {@code y[]}, and whose remaining elements are (in order) the
-	 *         first, second, and third derivatives of {@code y[]}
-	 *         evaluated at the indices between {@code 0} and {@code y.length}
+	 *         the first element is an array of smoothed values of {@code y[]},
+	 *         and whose remaining elements are (in order) the first, second,
+	 *         and third derivatives of {@code y[]} evaluated at the indices
+	 *         between {@code 0} and {@code y.length}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(double[] y,
 			double standardDeviation,
@@ -1799,11 +1808,11 @@ public class WaveformUtils
 	 *                           negative value will result in zero values for
 	 *                           all interpolant coefficients
 	 * @return a two-dimensional array of dimension {@code [4][to-from]}, where
-	 *         the first element is an array of smoothed values of
-	 *         {@code y[]} between {@code from} and {@code to}, and whose
-	 *         remaining elements are (in order) the first, second, and third
-	 *         derivatives of {@code y[]} evaluated at the indices between
-	 *         {@code from} and {@code to}
+	 *         the first element is an array of smoothed values of {@code y[]}
+	 *         between {@code from} and {@code to}, and whose remaining elements
+	 *         are (in order) the first, second, and third derivatives of
+	 *         {@code y[]} evaluated at the indices between {@code from} and
+	 *         {@code to}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(double[] y,
 			int from,
@@ -1908,21 +1917,20 @@ public class WaveformUtils
 	}
 
 	/**
-	 * Computes interpolant values for input array {@code y[]} using
-	 * the method described by Reinsch in Numerische Mathematik 10, 177-183
-	 * (1967). This method is called once, and the resulting interpolant values
-	 * can be used to compute interpolated points of {@code y[]} at any fractional
-	 * index between {@code 0} and {@code y.length}. The spline is a natural
-	 * spline, e.g. the second derivative is zero at the endpoints. The
-	 * smoothing spline reverts to a simple cubic spline when
-	 * {@code smoothingParameter=0}. For smoothing splines, setting
-	 * {@code smoothingParameter=1.0} is usually a good choice. Very large
-	 * values for {@code smoothingParameter} yield a straight-line fit to the
-	 * input data. {@code standardDeviation} is typically a measure of the
-	 * standard deviation of the system noise or the variation of the part of
-	 * the signal that should be "smoothed out" by the smoothing spline
-	 * algorithm. {@code y[]} is assumed to have uniform spacing between elements,
-	 * given by {@code dx}.
+	 * Computes interpolant values for input array {@code y[]} using the method
+	 * described by Reinsch in Numerische Mathematik 10, 177-183 (1967). This
+	 * method is called once, and the resulting interpolant values can be used
+	 * to compute interpolated points of {@code y[]} at any fractional index
+	 * between {@code 0} and {@code y.length}. The spline is a natural spline,
+	 * e.g. the second derivative is zero at the endpoints. The smoothing spline
+	 * reverts to a simple cubic spline when {@code smoothingParameter=0}. For
+	 * smoothing splines, setting {@code smoothingParameter=1.0} is usually a
+	 * good choice. Very large values for {@code smoothingParameter} yield a
+	 * straight-line fit to the input data. {@code standardDeviation} is
+	 * typically a measure of the standard deviation of the system noise or the
+	 * variation of the part of the signal that should be "smoothed out" by the
+	 * smoothing spline algorithm. {@code y[]} is assumed to have uniform
+	 * spacing between elements, given by {@code dx}.
 	 *
 	 * @param y	                 input array
 	 * @param standardDeviation	 standard deviation of the noisy parts of
@@ -1933,10 +1941,10 @@ public class WaveformUtils
 	 *                           negative value will result in zero values for
 	 *                           all interpolant coefficients
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
-	 *         the first element is an array of smoothed values of
-	 *         {@code y[]}, and whose remaining elements are (in order) the
-	 *         first, second, and third derivatives of {@code y[]}
-	 *         evaluated at the indices between {@code 0} and {@code y.length}
+	 *         the first element is an array of smoothed values of {@code y[]},
+	 *         and whose remaining elements are (in order) the first, second,
+	 *         and third derivatives of {@code y[]} evaluated at the indices
+	 *         between {@code 0} and {@code y.length}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(float[] y,
 			double standardDeviation,
@@ -1980,11 +1988,11 @@ public class WaveformUtils
 	 *                           negative value will result in zero values for
 	 *                           all interpolant coefficients
 	 * @return	a two-dimensional array of dimension {@code [4][to-from]}, where
-	 *         the first element is an array of smoothed values of
-	 *         {@code y[]} between {@code from} and {@code to}, and whose
-	 *         remaining elements are (in order) the first, second, and third
-	 *         derivatives of {@code y[]} evaluated at the indices between
-	 *         {@code from} and {@code to}
+	 *         the first element is an array of smoothed values of {@code y[]}
+	 *         between {@code from} and {@code to}, and whose remaining elements
+	 *         are (in order) the first, second, and third derivatives of
+	 *         {@code y[]} evaluated at the indices between {@code from} and
+	 *         {@code to}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(float[] y,
 			int from,
@@ -2110,12 +2118,12 @@ public class WaveformUtils
 		float[] deriv = null;
 
 		if (a != null) {
-			
+
 			if (a.length > 2) {
 
 				// initialize output array
 				deriv = new float[a.length];
-				
+
 				float oneOverDx = 1.0f / dx;
 				float oneOver2Dx = oneOverDx * 0.5f;
 
@@ -2129,22 +2137,22 @@ public class WaveformUtils
 
 				// approximate slope at final point
 				deriv[a.length - 1] = oneOverDx * (a[a.length - 1] - a[a.length - 2]);
-				
+
 			} else if (a.length == 2) {
-				
+
 				float slope = (a[1] - a[0]) / dx;
 				deriv = new float[]{slope, slope};
-				
+
 			} else if (a.length == 1) {
-				
+
 				deriv = new float[]{Float.NaN};
-				
+
 			} else {
-				
+
 				deriv = new float[0];
-				
+
 			}
-			
+
 		}
 
 		return deriv;
@@ -2171,12 +2179,12 @@ public class WaveformUtils
 		double[] deriv = null;
 
 		if (a != null) {
-			
+
 			if (a.length > 2) {
 
 				// initialize output array
 				deriv = new double[a.length];
-				
+
 				double oneOverDx = 1.0 / dx;
 				double oneOver2Dx = oneOverDx * 0.5;
 
@@ -2190,28 +2198,27 @@ public class WaveformUtils
 
 				// approximate slope at final point
 				deriv[a.length - 1] = oneOverDx * (a[a.length - 1] - a[a.length - 2]);
-				
+
 			} else if (a.length == 2) {
-				
+
 				double slope = (a[1] - a[0]) / dx;
 				deriv = new double[]{slope, slope};
-				
+
 			} else if (a.length == 1) {
-				
+
 				deriv = new double[]{Double.NaN};
-				
+
 			} else {
-				
+
 				deriv = new double[0];
-				
+
 			}
-			
+
 		}
 
 		return deriv;
 	}
 
-	
 	//--------------------unbox Array Methods---------------------------------//
 	/**
 	 * Returns array of unboxed primitive {@code byte}s equivalent to input
@@ -2224,17 +2231,17 @@ public class WaveformUtils
 	public static final byte[] unboxArray(Byte[] a)
 	{
 		byte[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new byte[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
+
 	/**
 	 * Returns array of unboxed primitive {@code int}s equivalent to input
 	 * {@code Integer} array. Output is {@code null} if input is {@code null}.
@@ -2246,17 +2253,17 @@ public class WaveformUtils
 	public static final int[] unboxArray(Integer[] a)
 	{
 		int[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new int[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
+
 	/**
 	 * Returns array of unboxed primitive {@code short}s equivalent to input
 	 * {@code Short} array. Output is {@code null} if input is {@code null}.
@@ -2268,17 +2275,17 @@ public class WaveformUtils
 	public static final short[] unboxArray(Short[] a)
 	{
 		short[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new short[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
+
 	/**
 	 * Returns array of unboxed primitive {@code long}s equivalent to input
 	 * {@code Long} array. Output is {@code null} if input is {@code null}.
@@ -2290,17 +2297,17 @@ public class WaveformUtils
 	public static final long[] unboxArray(Long[] a)
 	{
 		long[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new long[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
+
 	/**
 	 * Returns array of unboxed primitive {@code float}s equivalent to input
 	 * {@code Float} array. Output is {@code null} if input is {@code null}.
@@ -2312,39 +2319,39 @@ public class WaveformUtils
 	public static final float[] unboxArray(Float[] a)
 	{
 		float[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new float[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
+
 	/**
 	 * Returns array of unboxed primitive {@code double}s equivalent to input
 	 * {@code Double} array. Output is {@code null} if input is {@code null}.
 	 *
 	 * @param a input array of {@code Double}s
-	 * @return unboxed array of {@code double}s, unless input is {@code null}, in
-	 *         which case the output is also {@code null}
+	 * @return unboxed array of {@code double}s, unless input is {@code null},
+	 *         in which case the output is also {@code null}
 	 */
 	public static final double[] unboxArray(Double[] a)
 	{
 		double[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new double[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
+
 	/**
 	 * Returns array of unboxed primitive {@code char}s equivalent to input
 	 * {@code Character} array. Output is {@code null} if input is {@code null}.
@@ -2356,45 +2363,43 @@ public class WaveformUtils
 	public static final char[] unboxArray(Character[] a)
 	{
 		char[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new char[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
+
 	/**
 	 * Returns array of unboxed primitive {@code boolean}s equivalent to input
 	 * {@code Boolean} array. Output is {@code null} if input is {@code null}.
 	 *
 	 * @param a input array of {@code Boolean}s
-	 * @return unboxed array of {@code boolean}s, unless input is {@code null}, in
-	 *         which case the output is also {@code null}
+	 * @return unboxed array of {@code boolean}s, unless input is {@code null},
+	 *         in which case the output is also {@code null}
 	 */
 	public static final boolean[] unboxArray(Boolean[] a)
 	{
 		boolean[] unboxedArray = null;
-		
+
 		if (a != null) {
 			unboxedArray = new boolean[a.length];
-			for (int i=0; i<a.length; i++) {
+			for (int i = 0; i < a.length; i++) {
 				unboxedArray[i] = a[i];
 			}
 		}
-		
+
 		return unboxedArray;
 	}
-	
-	
-	//--------------------global minAndMax Methods----------------------------//
 
+	//--------------------global minAndMax Methods----------------------------//
 	/**
 	 * Compute the global minimum and maximum pixel values of an input ImageJ
-	 * {@code Imageplus} object. The min and max values are computed over all
+	 * {@code ImagePlus} object. The min and max values are computed over all
 	 * slices of an image. If {@code image} is null, the return value is null.
 	 *
 	 * @param image
@@ -2405,13 +2410,13 @@ public class WaveformUtils
 	public static final double[] getGlobalMinAndMax(ImagePlus image)
 	{
 		double[] minAndMax = null;
-		
+
 		if (image != null) {
 			double globalMin = Double.POSITIVE_INFINITY;
 			double globalMax = Double.NEGATIVE_INFINITY;
 			int stackSize = image.getStackSize();
 			ImageStack stack = image.getStack();
-			for (int slice=1; slice<=stackSize; slice++) {
+			for (int slice = 1; slice <= stackSize; slice++) {
 				ImageProcessor processor = stack.getProcessor(slice);
 				double min = processor.getMin();
 				double max = processor.getMax();
@@ -2422,12 +2427,12 @@ public class WaveformUtils
 					globalMax = max;
 				}
 			}
-			minAndMax = new double[] {globalMin, globalMax};
+			minAndMax = new double[]{globalMin, globalMax};
 		}
-		
+
 		return minAndMax;
 	}
-	
+
 	//--------------------window Methods--------------------------------------//
 	/**
 	 * Returns an array of window function values for a given length. Window
@@ -2437,22 +2442,45 @@ public class WaveformUtils
 	 * defined over the indices {@code i=0} to {@code i=n-1}, with the following
 	 * formulae:
 	 * <ul>
-	 * <li> {@code BOHMAN: w[i]=((1-(abs(i-n/2)/(n/2)))*cos(PI*(abs(i-n/2)/(n/2))) + (1/PI)*sin(PI*(abs(i-n/2)/(n/2))), i=0,1,...,n-1 } </li>
-	 * <li> {@code BLACKMAN: w[i]=0.42-0.5*cos(i*2*PI/n)+0.08*cos(2*i*2*PI/n), i=0,1,...,n-1 } </li>
-	 * <li> {@code BLACKMAN_NUTTALL: w[i]=0.3635819-0.4891775*cos(i*2*PI/n)+0.1365995cos(2*i*2*PI/n)-0.0106411cos(3*i*2*PI/n), i=0,1,...,n-1 } </li>
-	 * <li> {@code BLACKMAN_HARRIS: w[i]=0.42323-0.49755*cos(i*2*PI/n)+0.07922*cos(2*i*2*PI/n), i=0,1,...,n-1 } </li>
-	 * <li> {@code COSINE_TAPERED: w[i]=0.5*(1-cos(PI*i/m)), i=0,1,...,m-1; w[i]=0.5*(1-cos(PI*(n-i-1)/m)), i=n-m,...,n-1; w[i] = 1.0} elsewhere; {@code m=floor(n*windowParam/2.0), 0.0<=windowParam<=1.0 } </li>
-	 * <li>	{@code EXACT_BLACKMAN: w[i]=(7938-9240*cos(i*2*PI/n)+1430*cos(2*i*2*PI/n))/18608, i=0,1,...,n-1} </li>
-	 * <li> {@code EXPONENTIAL: w[i]=exp(a*i), a=ln(windowParam)/(n-1), i=0,1,...,n-1} </li>
-	 * <li>	{@code FLAT_TOP: w[i]=0.21557895-0.41663158*cos(i*2*PI/n)+0.277263158*cos(2*i*2*PI/n)-0.083578947*cos(3*i*2*PI/n)+0.006947368*cos(4*i*2*PI/n), i=0,1,...,n-1} </li>
-	 * <li>	{@code GAUSSIAN: w[i]=exp(-(i-(n/2))*(i-(n/2))/(2*windowParam*windowParam*(n+1)*(n+1))), i=0,1,...,n-1} </li>
+	 * <li> {@code BOHMAN: w[i]=((1-(abs(i-n/2)/(n/2)))*cos(PI*(abs(i-n/2)/(n/2))) + (1/PI)*sin(PI*(abs(i-n/2)/(n/2))), i=0,1,...,n-1
+	 * } </li>
+	 * <li> {@code BLACKMAN: w[i]=0.42-0.5*cos(i*2*PI/n)+0.08*cos(2*i*2*PI/n), i=0,1,...,n-1
+	 * } </li>
+	 * <li> {@code BLACKMAN_NUTTALL: w[i]=0.3635819-0.4891775*cos(i*2*PI/n)+0.1365995cos(2*i*2*PI/n)-0.0106411cos(3*i*2*PI/n), i=0,1,...,n-1
+	 * } </li>
+	 * <li> {@code BLACKMAN_HARRIS: w[i]=0.42323-0.49755*cos(i*2*PI/n)+0.07922*cos(2*i*2*PI/n), i=0,1,...,n-1
+	 * } </li>
+	 * <li>
+	 * {@code COSINE_TAPERED: w[i]=0.5*(1-cos(PI*i/m)), i=0,1,...,m-1; w[i]=0.5*(1-cos(PI*(n-i-1)/m)), i=n-m,...,n-1; w[i] = 1.0}
+	 * elsewhere; {@code m=floor(n*windowParam/2.0), 0.0<=windowParam<=1.0 }
+	 * </li>
+	 * <li>
+	 * {@code EXACT_BLACKMAN: w[i]=(7938-9240*cos(i*2*PI/n)+1430*cos(2*i*2*PI/n))/18608, i=0,1,...,n-1}
+	 * </li>
+	 * <li>
+	 * {@code EXPONENTIAL: w[i]=exp(a*i), a=ln(windowParam)/(n-1), i=0,1,...,n-1}
+	 * </li>
+	 * <li>
+	 * {@code FLAT_TOP: w[i]=0.21557895-0.41663158*cos(i*2*PI/n)+0.277263158*cos(2*i*2*PI/n)-0.083578947*cos(3*i*2*PI/n)+0.006947368*cos(4*i*2*PI/n), i=0,1,...,n-1}
+	 * </li>
+	 * <li>
+	 * {@code GAUSSIAN: w[i]=exp(-(i-(n/2))*(i-(n/2))/(2*windowParam*windowParam*(n+1)*(n+1))), i=0,1,...,n-1}
+	 * </li>
 	 * <li>	{@code HAMMING: w[i]=0.54-0.46*cos(2*PI*i/n), i=0,1,...,n-1} </li>
 	 * <li>	{@code HANNING: w[i]=0.5*(1.0-cos(2*PI*i/n)), i=0,1,...,n-1} </li>
-	 * <li>	{@code KAISER: w[i]=besselI0(windowParam*sqrt(1-a*a))/besselI0(windowParam), a=(i-k)/k, k=0.5*n, i=0,1,...,n-1, besselI0(x)} is the modified bessel function I<sub>0</sub>(x) </li>
-	 * <li> {@code MODIFIED_BARTLETT_HANNING: w[i]=0.62-0.48*abs((i/n)-0.5)+0.38*cos(2*PI*((i/n)-0.5))}; </li>
-	 * <li> {@code PARZEN: w[i]=1.0-6.0*c*c+6.0*c*c*c for 0<=c<=0.5, and w[i]=2.0*(1.0-c)^3 for 0.5<c<1, c=abs(i-0.5*n)/(0.5*n), i=0,1,...,n-1} </li>
+	 * <li>
+	 * {@code KAISER: w[i]=besselI0(windowParam*sqrt(1-a*a))/besselI0(windowParam), a=(i-k)/k, k=0.5*n, i=0,1,...,n-1, besselI0(x)}
+	 * is the modified bessel function I<sub>0</sub>(x) </li>
+	 * <li>
+	 * {@code MODIFIED_BARTLETT_HANNING: w[i]=0.62-0.48*abs((i/n)-0.5)+0.38*cos(2*PI*((i/n)-0.5))};
+	 * </li>
+	 * <li>
+	 * {@code PARZEN: w[i]=1.0-6.0*c*c+6.0*c*c*c for 0<=c<=0.5, and w[i]=2.0*(1.0-c)^3 for 0.5<c<1, c=abs(i-0.5*n)/(0.5*n), i=0,1,...,n-1}
+	 * </li>
 	 * <li> {@code TRIANGLE: w[i]=1.0-abs((2.0*i - n)/n), i=0,1,...,n-1} </li>
-	 * <li> {@code WELCH: w[i] = 1.0-((i - 0.5*n)/(0.5*n))*((i - 0.5*n)/(0.5*n)), i=0,1,...,n-1} </li>
+	 * <li>
+	 * {@code WELCH: w[i] = 1.0-((i - 0.5*n)/(0.5*n))*((i - 0.5*n)/(0.5*n)), i=0,1,...,n-1}
+	 * </li>
 	 * </ul>
 	 * The default value is the unit array.
 	 *
@@ -2514,7 +2542,7 @@ public class WaveformUtils
 					}
 					break;
 				}
-				
+
 				case BOHMAN: {
 					double nOver2 = 0.5 * n;
 					for (int i = 0; i < n; i++) {
@@ -2526,128 +2554,128 @@ public class WaveformUtils
 
 				case COSINE_TAPERED: {
 					int m = (int) Math.floor(0.5 * n * windowParam);
-					if (windowParam>=0.0 && windowParam<=1.0) {
-						for (int i=0; i<m; i++) {
-							w[i] = 0.5*(1.0-Math.cos(Math.PI*i/(double)m));
+					if (windowParam >= 0.0 && windowParam <= 1.0) {
+						for (int i = 0; i < m; i++) {
+							w[i] = 0.5 * (1.0 - Math.cos(Math.PI * i / (double) m));
 						}
-						for (int i=m; i<n-m; i++) {
+						for (int i = m; i < n - m; i++) {
 							w[i] = 1.0;
 						}
-						for (int i=n-m; i<n; i++) {
-							w[i] = 0.5*(1.0-Math.cos(Math.PI*(n-i-1)/(double)m));
+						for (int i = n - m; i < n; i++) {
+							w[i] = 0.5 * (1.0 - Math.cos(Math.PI * (n - i - 1) / (double) m));
 						}
 					}
 					break;
 				}
-				
+
 				case EXACT_BLACKMAN: {
-					double c = 2.0*Math.PI/n;
-					for (int i=0; i<n; i++) {
-						w[i] = (7938.0 - 9240.0*Math.cos(i*c) + 1430.0*Math.cos(2*i*c))/18608.0;
+					double c = 2.0 * Math.PI / n;
+					for (int i = 0; i < n; i++) {
+						w[i] = (7938.0 - 9240.0 * Math.cos(i * c) + 1430.0 * Math.cos(2 * i * c)) / 18608.0;
 					}
 					break;
 				}
-				
+
 				case EXPONENTIAL: {
 					if (windowParam > 0) {
-					    w[0] = 1.0;
-					    if (n > 1) {
-    						double a = Math.log(windowParam)/(n-1.0);
-    						for (int i=1; i<n; i++) {
-    							w[i] = Math.exp(a*i);
-    						}
+						w[0] = 1.0;
+						if (n > 1) {
+							double a = Math.log(windowParam) / (n - 1.0);
+							for (int i = 1; i < n; i++) {
+								w[i] = Math.exp(a * i);
+							}
 						}
 					}
 					break;
 				}
-				
+
 				case FLAT_TOP: {
 					double a0 = 0.21557895, a1 = 0.41663158, a2 = 0.277263158, a3 = 0.083578947, a4 = 0.006947368;
-					double c = 2.0*Math.PI/n;
-					for (int i=0; i<n; i++) {
-						w[i] = a0 - a1*Math.cos(i*c) + a2*Math.cos(2*i*c) - a3*Math.cos(3*i*c) + a4*Math.cos(4*i*c);
+					double c = 2.0 * Math.PI / n;
+					for (int i = 0; i < n; i++) {
+						w[i] = a0 - a1 * Math.cos(i * c) + a2 * Math.cos(2 * i * c) - a3 * Math.cos(3 * i * c) + a4 * Math.cos(4 * i * c);
 					}
 					break;
 				}
-				
+
 				case GAUSSIAN: {
 					if (windowParam >= 0.0) {
-						double m = 0.5*n;
-						double c = 1.0/(2.0*windowParam*windowParam*(n+1)*(n+1));
-						for (int i=0; i<n; i++) {
-							w[i] = Math.exp(-(i-m)*(i-m)*c);
+						double m = 0.5 * n;
+						double c = 1.0 / (2.0 * windowParam * windowParam * (n + 1) * (n + 1));
+						for (int i = 0; i < n; i++) {
+							w[i] = Math.exp(-(i - m) * (i - m) * c);
 						}
 					}
 					break;
 				}
-				
+
 				case HAMMING: {
-					double c = 2.0*Math.PI/n;
-					for (int i=0; i<n; i++) {
-						w[i] = 0.54 - 0.46*Math.cos(i*c);
+					double c = 2.0 * Math.PI / n;
+					for (int i = 0; i < n; i++) {
+						w[i] = 0.54 - 0.46 * Math.cos(i * c);
 					}
 					break;
 				}
-				
+
 				case HANNING: {
-					double c = 2.0*Math.PI/n;
-					for (int i=0; i<n; i++) {
-						w[i] = 0.5*(1.0 - Math.cos(i*c));
+					double c = 2.0 * Math.PI / n;
+					for (int i = 0; i < n; i++) {
+						w[i] = 0.5 * (1.0 - Math.cos(i * c));
 					}
 					break;
 				}
-				
+
 				case KAISER: {
-					double k = 0.5*n;
-					for (int i=0; i<n; i++) {
-						double a = (i-k)/k;
-						w[i] = besselI0(windowParam*Math.sqrt(1.0 - a*a))/besselI0(windowParam);
+					double k = 0.5 * n;
+					for (int i = 0; i < n; i++) {
+						double a = (i - k) / k;
+						w[i] = besselI0(windowParam * Math.sqrt(1.0 - a * a)) / besselI0(windowParam);
 					}
 					break;
 				}
-				
+
 				case MODIFIED_BARTLETT_HANNING: {
-					for (int i=0; i<n; i++) {
-						double c = (double)i/(double)n - 0.5;
-						w[i] = 0.62 - 0.48*Math.abs(c) + 0.38*Math.cos(2.0*Math.PI*(c));
+					for (int i = 0; i < n; i++) {
+						double c = (double) i / (double) n - 0.5;
+						w[i] = 0.62 - 0.48 * Math.abs(c) + 0.38 * Math.cos(2.0 * Math.PI * (c));
 					}
 					break;
 				}
-				
+
 				case PARZEN: {
-					for (int i=0; i<n; i++) {
-						double c = Math.abs(i-0.5*n)/(0.5*n);
+					for (int i = 0; i < n; i++) {
+						double c = Math.abs(i - 0.5 * n) / (0.5 * n);
 						if (c <= 0.5) {
-							w[i] = 1.0 - 6.0*c*c + 6.0*c*c*c;
+							w[i] = 1.0 - 6.0 * c * c + 6.0 * c * c * c;
 						} else {
-							w[i] = 2.0*WaveformUtils.pow(1.0 - c, 3);
+							w[i] = 2.0 * WaveformUtils.pow(1.0 - c, 3);
 						}
 					}
 					break;
 				}
-				
+
 				case RECTANGLE: {
-					for (int i=0; i<n; i++) {
+					for (int i = 0; i < n; i++) {
 						w[i] = 1.0;
 					}
 					break;
 				}
-				
+
 				case TRIANGLE: {
-					for (int i=0; i<n; i++) {
-						w[i] = 1.0 - Math.abs((2.0*i - n)/n);
+					for (int i = 0; i < n; i++) {
+						w[i] = 1.0 - Math.abs((2.0 * i - n) / n);
 					}
 					break;
 				}
-				
+
 				case WELCH: {
-					for (int i=0; i<n; i++) {
-						double c = (i - 0.5*n)/(0.5*n);
-						w[i] = 1.0 - c*c;
+					for (int i = 0; i < n; i++) {
+						double c = (i - 0.5 * n) / (0.5 * n);
+						w[i] = 1.0 - c * c;
 					}
 					break;
 				}
-				
+
 				default: {
 					Arrays.fill(w, 1.0);
 				}
@@ -2655,22 +2683,22 @@ public class WaveformUtils
 
 			if (normalize) {
 				double sum = 0.0;
-				for (int i=0; i<n; i++) {
+				for (int i = 0; i < n; i++) {
 					sum += w[i];
 				}
-				multiplyScalarInPlace(w, 1.0/sum);
+				multiplyScalarInPlace(w, 1.0 / sum);
 			}
-			
+
 			return w;
 
 		} else if (n == 1) {
-			
-			return new double[] {1.0};
-			
+
+			return new double[]{1.0};
+
 		} else if (n == 0) {
-			
-			return new double[] {};
-			
+
+			return new double[]{};
+
 		} else {
 
 			return null;
@@ -2686,8 +2714,9 @@ public class WaveformUtils
 	 * the maximum value of {@code 1.0} is at index {@code 0} of the array). All
 	 * values in the returned array are nonzero; e.g., for a {@code TRIANGLE}
 	 * window function given an input of {@code radius=1}, the output is a
-	 * 2-element array the returned array is {@code {1.0, 0.5}} (non-normalized).
-		 * 
+	 * 2-element array the returned array is {@code {1.0, 0.5}}
+	 * (non-normalized).
+	 *
 	 * @param windowType  window function enumerated type constant
 	 * @param radius      number of nonzero-valued points for this window
 	 *                    function on the right side of the maximum value of
@@ -2707,9 +2736,9 @@ public class WaveformUtils
 	 * attenuation, and can be any real number </li>
 	 * </ul>
 	 * This value is ignored for other types of windows.
-	 * @param normalize set to true to normalize weights so that the sum of all 
-	 *					elements of the equivalent <b>two-sided</b> window 
-	 *					function is equal to {@code 1.0}
+	 * @param normalize   set to true to normalize weights so that the sum of
+	 *                    all elements of the equivalent <b>two-sided</b> window
+	 *                    function is equal to {@code 1.0}
 	 * @return an array of window function values of length {@code radius+1}
 	 *         whose first element is always 1.0 and last element is nonzero. If
 	 *         {@code radius==0}, the returned array has a single element with
@@ -2719,39 +2748,39 @@ public class WaveformUtils
 	{
 		if (radius > 0) {
 
-			double[] w = new double[radius+1];
+			double[] w = new double[radius + 1];
 			w[0] = 1.0;
-			int n = 2*(radius+1);
+			int n = 2 * (radius + 1);
 
 			switch (windowType) {
 
 				case BLACKMAN: {
-					double c = 2.0*Math.PI/n;
-					for (int i = 1, j=i+radius+1; i <= radius; i++, j++) {
+					double c = 2.0 * Math.PI / n;
+					for (int i = 1, j = i + radius + 1; i <= radius; i++, j++) {
 						w[i] = 0.42 - 0.5 * Math.cos(j * c) + 0.08 * Math.cos(2 * j * c);
 					}
 					break;
 				}
 
 				case BLACKMAN_HARRIS: {
-					double c = Math.PI/radius;
-					for (int i = 1, j=i+radius; i <= radius; i++, j++) {
+					double c = Math.PI / radius;
+					for (int i = 1, j = i + radius; i <= radius; i++, j++) {
 						w[i] = 0.42323 - 0.49755 * Math.cos(j * c) + 0.07922 * Math.cos(2 * j * c);
 					}
 					break;
 				}
 
 				case BLACKMAN_NUTTALL: {
-					double c = Math.PI/radius;
-					for (int i = 1, j=i+radius; i <= radius; i++, j++) {
+					double c = Math.PI / radius;
+					for (int i = 1, j = i + radius; i <= radius; i++, j++) {
 						w[i] = 0.3635819 - 0.4891775 * Math.cos(j * c) + 0.1365995 * Math.cos(2 * j * c) - 0.0106411 * Math.cos(3 * j * c);
 					}
 					break;
 				}
-				
+
 				case BOHMAN: {
 					double nOver2 = 0.5 * n;
-					for (int i = 1, j=i+radius+1; i <= radius; i++, j++) {
+					for (int i = 1, j = i + radius + 1; i <= radius; i++, j++) {
 						double fraction = Math.abs(j - nOver2) / nOver2;
 						w[i] = ((1.0 - fraction) * Math.cos(Math.PI * fraction) + (1.0 / Math.PI) * (Math.sin(Math.PI * fraction)));
 					}
@@ -2759,122 +2788,122 @@ public class WaveformUtils
 				}
 
 				case COSINE_TAPERED: {
-					if (windowParam>0.0 && windowParam<=1.0) {
-					   	int m = (int) Math.floor(radius * (1.0-windowParam));
-						for (int i=0; i<m; i++)  {
+					if (windowParam > 0.0 && windowParam <= 1.0) {
+						int m = (int) Math.floor(radius * (1.0 - windowParam));
+						for (int i = 0; i < m; i++) {
 							w[i] = 1.0;
 						}
-						for (int i=m; i<=radius; i++) {
-							w[i] = 0.5*(1.0+Math.cos(Math.PI*(m-i)/(double)(radius+1-m)));
+						for (int i = m; i <= radius; i++) {
+							w[i] = 0.5 * (1.0 + Math.cos(Math.PI * (m - i) / (double) (radius + 1 - m)));
 						}
-					} 
-					break;
-				}
-				
-				case EXACT_BLACKMAN: {
-					double c = 2.0*Math.PI/(2*radius);
-					for (int i = 0, j=i+radius; i <= radius; i++, j++) {
-						w[i] = (7938.0 - 9240.0*Math.cos(j*c) + 1430.0*Math.cos(2*j*c))/18608.0;
 					}
 					break;
 				}
-				
+
+				case EXACT_BLACKMAN: {
+					double c = 2.0 * Math.PI / (2 * radius);
+					for (int i = 0, j = i + radius; i <= radius; i++, j++) {
+						w[i] = (7938.0 - 9240.0 * Math.cos(j * c) + 1430.0 * Math.cos(2 * j * c)) / 18608.0;
+					}
+					break;
+				}
+
 				case EXPONENTIAL: {
 					if (windowParam > 0) {
-						double a = Math.log(windowParam)/radius;
-						for (int i=1; i<=radius; i++) {
-							w[i] = Math.exp(a*i);
-						}						
+						double a = Math.log(windowParam) / radius;
+						for (int i = 1; i <= radius; i++) {
+							w[i] = Math.exp(a * i);
+						}
 					}
 					break;
 				}
-				
+
 				case FLAT_TOP: {
 					double a0 = 0.21557895, a1 = 0.41663158, a2 = 0.277263158, a3 = 0.083578947, a4 = 0.006947368;
-					double c = 2.0*Math.PI/(2*radius);
-					for (int i = 1, j=i+radius; i <= radius; i++, j++) {
-						w[i] = a0 - a1*Math.cos(j*c) + a2*Math.cos(2*j*c) - a3*Math.cos(3*j*c) + a4*Math.cos(4*j*c);
+					double c = 2.0 * Math.PI / (2 * radius);
+					for (int i = 1, j = i + radius; i <= radius; i++, j++) {
+						w[i] = a0 - a1 * Math.cos(j * c) + a2 * Math.cos(2 * j * c) - a3 * Math.cos(3 * j * c) + a4 * Math.cos(4 * j * c);
 					}
 					break;
 				}
-				
+
 				case GAUSSIAN: {
 					if (windowParam >= 0.0) {
-						double c = 1.0/(2.0*windowParam*windowParam*(n-1)*(n-1));
+						double c = 1.0 / (2.0 * windowParam * windowParam * (n - 1) * (n - 1));
 						for (int i = 1; i <= radius; i++) {
-							w[i] = Math.exp(-(i*i)*c);
+							w[i] = Math.exp(-(i * i) * c);
 						}
 					}
 					break;
 				}
-				
+
 				case HAMMING: {
-					double c = Math.PI/radius;
-					for (int i = 1, j=i+radius; i <= radius; i++, j++) {
-						w[i] = 0.54 - 0.46*Math.cos(j*c);
-					}   
-					break;
-				}
-				
-				case HANNING: {
-					double c = Math.PI/(radius+1);
-					for (int i = 1, j=i+radius+1; i <= radius; i++, j++) {
-						w[i] = 0.5*(1.0 - Math.cos(j*c));
+					double c = Math.PI / radius;
+					for (int i = 1, j = i + radius; i <= radius; i++, j++) {
+						w[i] = 0.54 - 0.46 * Math.cos(j * c);
 					}
 					break;
 				}
-				
+
+				case HANNING: {
+					double c = Math.PI / (radius + 1);
+					for (int i = 1, j = i + radius + 1; i <= radius; i++, j++) {
+						w[i] = 0.5 * (1.0 - Math.cos(j * c));
+					}
+					break;
+				}
+
 				case KAISER: {
 					double k = radius;
-					for (int i = 1, j=i+radius; i <= radius; i++, j++) {
-						double a = (j-k)/k;
-						w[i] = besselI0(windowParam*Math.sqrt(1.0 - a*a))/besselI0(windowParam);
+					for (int i = 1, j = i + radius; i <= radius; i++, j++) {
+						double a = (j - k) / k;
+						w[i] = besselI0(windowParam * Math.sqrt(1.0 - a * a)) / besselI0(windowParam);
 					}
 					break;
 				}
-				
+
 				case MODIFIED_BARTLETT_HANNING: {
-					for (int i = 1, j=i+radius+1; i <= radius; i++, j++) {
-						double c = (double)j/(double)n - 0.5;
-						w[i] = 0.62 - 0.48*c + 0.38*Math.cos(2.0*Math.PI*(c));
+					for (int i = 1, j = i + radius + 1; i <= radius; i++, j++) {
+						double c = (double) j / (double) n - 0.5;
+						w[i] = 0.62 - 0.48 * c + 0.38 * Math.cos(2.0 * Math.PI * (c));
 					}
 					break;
 				}
-				
+
 				case PARZEN: {
-					for (int i = 1, j=i+radius+1; i <= radius; i++, j++) {
-						double c = Math.abs(j-0.5*n)/(0.5*n);
+					for (int i = 1, j = i + radius + 1; i <= radius; i++, j++) {
+						double c = Math.abs(j - 0.5 * n) / (0.5 * n);
 						if (c <= 0.5) {
-							w[i] = 1.0 - 6.0*c*c + 6.0*c*c*c;
+							w[i] = 1.0 - 6.0 * c * c + 6.0 * c * c * c;
 						} else {
-							w[i] = 2.0*WaveformUtils.pow(1.0 - c, 3);
+							w[i] = 2.0 * WaveformUtils.pow(1.0 - c, 3);
 						}
 					}
 					break;
 				}
-				
+
 				case RECTANGLE: {
-					for (int i=1; i<=radius; i++) {
+					for (int i = 1; i <= radius; i++) {
 						w[i] = 1.0;
 					}
 					break;
 				}
-				
+
 				case TRIANGLE: {
-					for (int i = 1, j=i+radius+1; i <= radius; i++, j++) {
-						w[i] = 1.0 - Math.abs((2.0*j - n)/n);
+					for (int i = 1, j = i + radius + 1; i <= radius; i++, j++) {
+						w[i] = 1.0 - Math.abs((2.0 * j - n) / n);
 					}
 					break;
 				}
-				
+
 				case WELCH: {
-					for (int i = 1, j=i+radius+1; i <= radius; i++, j++) {
-						double c = (j - 0.5*n)/(0.5*n);
-						w[i] = 1.0 - c*c;
+					for (int i = 1, j = i + radius + 1; i <= radius; i++, j++) {
+						double c = (j - 0.5 * n) / (0.5 * n);
+						w[i] = 1.0 - c * c;
 					}
 					break;
 				}
-				
+
 				default: {
 					Arrays.fill(w, 1.0);
 				}
@@ -2882,27 +2911,26 @@ public class WaveformUtils
 
 			if (normalize) {
 				double sum = 1.0;
-				for (int i=1; i<=radius; i++) {
-					sum += 2.0*w[i];
+				for (int i = 1; i <= radius; i++) {
+					sum += 2.0 * w[i];
 				}
-				multiplyScalarInPlace(w, 1.0/sum);
+				multiplyScalarInPlace(w, 1.0 / sum);
 			}
-			
+
 			return w;
 
 		} else if (radius == 0) {
-			
-			return new double[] {1.0};
-			
+
+			return new double[]{1.0};
+
 		} else {
 
 			return null;
 
 		}
-		
+
 	}
-	
-	
+
 	//--------------------Miscellaneous Methods-------------------------------//
 	/**
 	 * Returns the base-2 logarithm of the input.
@@ -2943,22 +2971,73 @@ public class WaveformUtils
 
 	/**
 	 * Returns the modified Bessel function I0(x) for any real x value.
-	 * 
-	 * @param x 
+	 *
+	 * @param x
 	 */
 	private static double besselI0(double x)
 	{
 		double ax, ans, y;
-		
+
 		if ((ax = Math.abs(x)) < 3.75) {
-			y = x/3.75;
+			y = x / 3.75;
 			y *= y;
-			ans = 1.0 + y*(3.5156229 + y*(3.0899424 + y*(1.2067492 + y*(0.2659732 + y*(0.360768e-1 + y*0.45813e-2)))));
+			ans = 1.0 + y * (3.5156229 + y * (3.0899424 + y * (1.2067492 + y * (0.2659732 + y * (0.360768e-1 + y * 0.45813e-2)))));
 		} else {
-			y = 3.75/ax;
-			ans = (Math.exp(ax)/Math.sqrt(ax))*(0.39894228 + y*(0.1328592e-1 + y*(0.225319e-2 + y*(-0.157565e-2 + y*(0.916281e-2 + y*(-0.2057706e-1 + y*(0.2635537e-1 + y*(-0.1647633e-1 + y*0.392377e-2))))))));
+			y = 3.75 / ax;
+			ans = (Math.exp(ax) / Math.sqrt(ax)) * (0.39894228 + y * (0.1328592e-1 + y * (0.225319e-2 + y * (-0.157565e-2 + y * (0.916281e-2 + y * (-0.2057706e-1 + y * (0.2635537e-1 + y * (-0.1647633e-1 + y * 0.392377e-2))))))));
 		}
-		
+
 		return ans;
+	}
+
+	/**
+	 * Computes real roots for quadratic equation of the form
+	 * {@code ax^2 + bx + c = 0}, given real coefficients {@code a}, {@code b},
+	 * and {@code c}. If there are two distinct roots, they are returned in a
+	 * two-element array. If there is a single root or a double root, the result
+	 * is returned in a single-element array. If there are no real-valued roots,
+	 * the function returns {@code null}.
+	 *
+	 * @param a quadratic coefficient
+	 * @param b linear coefficient
+	 * @param c constant term
+	 * @return array of distinct roots, or null if there are no real-valued
+	 *         roots
+	 */
+	public static final double[] quadraticRoots(double a, double b, double c)
+	{
+		if (a == 0.0) {
+			if (b == 0.0) {
+				return null;
+			} else {
+				return new double[]{-c / b};
+			}
+		} else if (b == 0.0) {
+			if (c == 0.0) {
+				return new double[]{0.0};
+			} else {
+				double q = Math.sqrt(-c / a);
+				return new double[]{-q, q};
+			}
+		} else if (c == 0.0) {
+			if (a == 0.0) {
+				return new double[]{0.0};
+			} else {
+				return new double[]{-b / a};
+			}
+		} else {
+			double x = b * b - 4 * a * c;
+			if (x < 0.0) {
+				return null;
+			}
+			double q = -0.5 * (b + Math.signum(b) * Math.sqrt(x));
+			double r1 = q / a;
+			double r2 = c / q;
+			if (r1 < r2) {
+				return new double[]{r1, r2};
+			} else {
+				return new double[]{r2, r1};
+			}
+		}
 	}
 }
