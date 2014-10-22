@@ -3,6 +3,7 @@ package waveformAnalysisForImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 /**
@@ -2996,7 +2997,10 @@ public class WaveformUtils
 	 * and {@code c}. If there are two distinct roots, they are returned in a
 	 * two-element array. If there is a single root or a double root, the result
 	 * is returned in a single-element array. If there are no real-valued roots,
-	 * the function returns {@code null}.
+	 * the function returns {@code null}. Note that the discriminant
+	 * {@code b*b-4*a*c} contains the potential for catastrophic cancellation if
+	 * its two terms are nearly equal, so in this case the algorithm uses the
+	 * BigDecimal class to enhance computation precision.
 	 *
 	 * @param a quadratic coefficient
 	 * @param b linear coefficient
@@ -3023,20 +3027,39 @@ public class WaveformUtils
 			if (a == 0.0) {
 				return new double[]{0.0};
 			} else {
-				return new double[]{-b / a};
+				double r = -b / a;
+				if (r < 0.0) {
+					return new double[]{r, 0.0};
+				} else {
+					return new double[]{0.0, r};
+				}
 			}
 		} else {
 			double x = b * b - 4 * a * c;
 			if (x < 0.0) {
 				return null;
 			}
+			if (x == 0.0) { // test to see if this happened because of rounding errors
+				BigDecimal discriminant = new BigDecimal(b);
+				discriminant = discriminant.multiply(discriminant);
+				BigDecimal fourac = new BigDecimal(-4.0);
+				fourac = fourac.multiply(new BigDecimal(a));
+				fourac = fourac.multiply(new BigDecimal(c));
+				discriminant = discriminant.add(fourac);
+				x = discriminant.doubleValue();
+				if (x == 0.0) { // discriminant is truly zero 
+					return new double[]{-b / (a + a)};
+				}
+			}
 			double q = -0.5 * (b + Math.signum(b) * Math.sqrt(x));
 			double r1 = q / a;
 			double r2 = c / q;
 			if (r1 < r2) {
 				return new double[]{r1, r2};
-			} else {
+			} else if (r1 > r2) {
 				return new double[]{r2, r1};
+			} else {
+				return new double[]{r1};
 			}
 		}
 	}
