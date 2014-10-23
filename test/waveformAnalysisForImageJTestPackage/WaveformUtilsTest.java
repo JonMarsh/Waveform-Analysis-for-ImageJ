@@ -1698,7 +1698,13 @@ public class WaveformUtilsTest
 		c = 94906268.375;
 		expResult = new double[] {1.0, 1.000000028975958};
 		result = WaveformUtils.quadraticRoots(a, b, c);
-		System.out.println(Arrays.toString(result));
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
+
+		a = 94906266.375;
+		b = -189812534.75;
+		c = 94906268.375;
+		expResult = new double[] {1.0, 1.000000021073424};
+		result = WaveformUtils.quadraticRoots(a, b, c);
 		assertArrayEquals(expResult, result, Math.ulp(1.0));
 
 	}
