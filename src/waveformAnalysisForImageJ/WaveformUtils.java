@@ -10,10 +10,12 @@ import java.util.Arrays;
  * Static utility methods for waveform analysis in ImageJ plugins.
  *
  * @author Jon N. Marsh
- * @version 2014-09-23
+ * @version 2014-10-22
  */
 public class WaveformUtils
 {
+	public static final double DOUBLE_EPS = Math.ulp(1.0);
+	public static final double ONE_PLUS_DOUBLE_EPS = Math.nextUp(1.0);
 
 	/**
 	 * Private constructor
@@ -3035,11 +3037,13 @@ public class WaveformUtils
 				}
 			}
 		} else {
-			double x = b * b - 4 * a * c;
-			if (x < 0.0) {
+			double bb = b*b;
+			double fac = 4.0*a*c;
+			if (bb < fac) { // discriminant < 0.0
 				return null;
 			}
-			if (x == 0.0) { // test to see if this happened because of rounding errors
+			double x = bb - fac;
+			if (bb/fac <= ONE_PLUS_DOUBLE_EPS) { // discriminant close to zero
 				BigDecimal discriminant = new BigDecimal(b);
 				discriminant = discriminant.multiply(discriminant);
 				BigDecimal fourac = new BigDecimal(-4.0);
