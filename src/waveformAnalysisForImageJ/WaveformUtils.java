@@ -2997,12 +2997,12 @@ public class WaveformUtils
 	 * Computes real roots for quadratic equation of the form
 	 * {@code ax^2 + bx + c = 0}, given real coefficients {@code a}, {@code b},
 	 * and {@code c}. If there are two distinct roots, they are returned in a
-	 * two-element array. If there is a single root or a double root, the result
+	 * two-element array. If there is a single root or two identical roots, the result
 	 * is returned in a single-element array. If there are no real-valued roots,
-	 * the function returns {@code null}. Note that the discriminant
+	 * the function returns a zero-length array. Note that the discriminant
 	 * {@code b*b-4*a*c} contains the potential for catastrophic cancellation if
 	 * its two terms are nearly equal, so in this case the algorithm uses the
-	 * BigDecimal class to enhance computation precision.
+	 * {@code java.math#BigDecimal BigDecimal} class to enhance computation precision.
 	 *
 	 * @param a quadratic coefficient
 	 * @param b linear coefficient
@@ -3014,7 +3014,7 @@ public class WaveformUtils
 	{
 		if (a == 0.0) {
 			if (b == 0.0) {
-				return null;
+				return new double[0];
 			} else {
 				return new double[]{-c / b};
 			}
@@ -3040,7 +3040,7 @@ public class WaveformUtils
 			double bb = b*b;
 			double fac = 4.0*a*c;
 			if (bb < fac) { // discriminant < 0.0
-				return null;
+				return new double[0];
 			}
 			double x = bb - fac;
 			if (bb/fac <= ONE_PLUS_DOUBLE_EPS) { // discriminant close to zero
@@ -3051,7 +3051,7 @@ public class WaveformUtils
 				fourac = fourac.multiply(new BigDecimal(c));
 				discriminant = discriminant.add(fourac);
 				x = discriminant.doubleValue();
-				if (x == 0.0) { // discriminant is truly zero 
+				if (x == 0.0) { // discriminant is truly zero to double precision
 					return new double[]{-b / (a + a)};
 				}
 			}
