@@ -133,7 +133,7 @@ public class ZeroCrossingCount implements ExtendedPlugInFilter
 	
 	/**
 	 * Returns an array representing the number of zero-crossings in each record
-	 * in {@code waveforms}, where each record {@code recordLength} elements.
+	 * in {@code waveforms}, where each record consists of {@code recordLength} elements.
 	 * Output is null if {@code waveforms==null}, {@code recordLength<=1},
 	 * {@code waveforms.length<recordLength}, or if {@code waveforms.length} is
 	 * not evenly divisible by {@code recordLength}. A zero-crossing occurs if

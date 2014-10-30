@@ -944,6 +944,122 @@ public class WaveformUtilsTest
 	}
 
 	/**
+	 * Test of cubicSplineInterpolant method, of class WaveformUtils.
+	 */
+	@Test
+	public void testCubicSplineInterpolant_DoubleArgs()
+	{
+		System.out.println("cubicSplineInterpolant");
+		double[] x = new double[]{0, 0.1, 0.5, 1, 2};
+		double[] y = new double[]{0, 0.3, 0.6, -0.2, 3};
+		double[] expResultA = Arrays.copyOf(y, y.length);
+		double[] expResultB = new double[]{3.167184154175589, 2.6656316916488216, -1.0750535331905777, -0.4817987152034249, 0.0};
+		double[] expResultC = new double[]{0.0, -5.0155246252676635, -4.336188436830836, 5.522698072805138, 0.0};
+		double[] expResultD = new double[]{-16.718415417558877, 0.5661134903640226, 6.572591006423982, -1.8408993576017125, 0.0};
+		double[][] result = WaveformUtils.cubicSplineInterpolant(x, y);
+		assertArrayEquals(expResultA, result[0], Math.ulp(10.0));
+		assertArrayEquals(expResultB, result[1], Math.ulp(10.0));
+		assertArrayEquals(expResultC, result[2], Math.ulp(10.0));
+		assertArrayEquals(expResultD, result[3], Math.ulp(20.0));
+	}
+	
+	/**
+	 * Test of cubicSplineInterpolant method, of class WaveformUtils.
+	 */
+	@Test
+	public void testCubicSplineInterpolant_FloatArgs()
+	{
+		System.out.println("cubicSplineInterpolant");
+		float[] x = new float[]{0.0f, 0.1f, 0.5f, 1.0f, 2.0f};
+		float[] y = new float[]{0.0f, 0.3f, 0.6f, -0.2f, 3.0f};
+		double[] expResultA = new double[]{0, 0.3, 0.6, -0.2, 3};
+		double[] expResultB = new double[]{3.167184154175589, 2.6656316916488216, -1.0750535331905777, -0.4817987152034249, 0.0};
+		double[] expResultC = new double[]{0.0, -5.0155246252676635, -4.336188436830836, 5.522698072805138, 0.0};
+		double[] expResultD = new double[]{-16.718415417558877, 0.5661134903640226, 6.572591006423982, -1.8408993576017125, 0.0};
+		double[][] result = WaveformUtils.cubicSplineInterpolant(x, y);
+		assertArrayEquals(expResultA, result[0], Math.ulp(10.0f));
+		assertArrayEquals(expResultB, result[1], Math.ulp(10.0f));
+		assertArrayEquals(expResultC, result[2], Math.ulp(10.0f));
+		assertArrayEquals(expResultD, result[3], Math.ulp(20.0f));
+	}
+	
+	/**
+	 * Test of cubicSplineInterpolantUniformSpacing method, of class WaveformUtils.
+	 */
+	@Test
+	public void testCubicSplineInterpolantUniformSpacing_DoubleArgs()
+	{
+		System.out.println("cubicSplineInterpolant");
+		double[] y = new double[]{0, 0.3, 0.6, -0.2, 3};
+		double[] expResultA = Arrays.copyOf(y, y.length);
+		double[] expResultB = new double[]{0.15, 0.6, -0.75, 0.9, 0.0};
+		double[] expResultC = new double[]{0., 0.45, -1.8, 3.45, 0.0};
+		double[] expResultD = new double[]{0.15, -0.75, 1.75, -1.15, 0.0};
+		double[][] result = WaveformUtils.cubicSplineInterpolantUniformSpacing(y, 1.0);
+		assertArrayEquals(expResultA, result[0], Math.ulp(1.0));
+		assertArrayEquals(expResultB, result[1], Math.ulp(2.0));
+		assertArrayEquals(expResultC, result[2], Math.ulp(4.0));
+		assertArrayEquals(expResultD, result[3], Math.ulp(2.0));
+	}
+
+	/**
+	 * Test of cubicSplineInterpolantUniformSpacing method, of class WaveformUtils.
+	 */
+	@Test
+	public void testCubicSplineInterpolantUniformSpacing_FloatArgs()
+	{
+		System.out.println("cubicSplineInterpolant");
+		float[] y = new float[]{0.0f, 0.3f, 0.6f, -0.2f, 3.0f};
+		double[] expResultA = new double[]{0, 0.3, 0.6, -0.2, 3};
+		double[] expResultB = new double[]{0.15, 0.6, -0.75, 0.9, 0.0};
+		double[] expResultC = new double[]{0., 0.45, -1.8, 3.45, 0.0};
+		double[] expResultD = new double[]{0.15, -0.75, 1.75, -1.15, 0.0};
+		double[][] result = WaveformUtils.cubicSplineInterpolantUniformSpacing(y, 1.0);
+		assertArrayEquals(expResultA, result[0], Math.ulp(1.0f));
+		assertArrayEquals(expResultB, result[1], Math.ulp(2.0f));
+		assertArrayEquals(expResultC, result[2], Math.ulp(4.0f));
+		assertArrayEquals(expResultD, result[3], Math.ulp(2.0f));
+	}
+
+	/**
+	 * Test of cubicSplineInterpolantUniformSpacing method, of class WaveformUtils.
+	 */
+	@Test
+	public void testCubicSplineInterpolantUniformSpacingFromTo_DoubleArgs()
+	{
+		System.out.println("cubicSplineInterpolant");
+		double[] y = new double[]{-10.0, 0, 0.3, 0.6, -0.2, 3.0, 100.0};
+		double[] expResultA = Arrays.copyOfRange(y, 1, 6);
+		double[] expResultB = new double[]{0.15, 0.6, -0.75, 0.9, 0.0};
+		double[] expResultC = new double[]{0., 0.45, -1.8, 3.45, 0.0};
+		double[] expResultD = new double[]{0.15, -0.75, 1.75, -1.15, 0.0};
+		double[][] result = WaveformUtils.cubicSplineInterpolantUniformSpacing(y, 1, 6, 1.0);
+		assertArrayEquals(expResultA, result[0], Math.ulp(1.0));
+		assertArrayEquals(expResultB, result[1], Math.ulp(2.0));
+		assertArrayEquals(expResultC, result[2], Math.ulp(4.0));
+		assertArrayEquals(expResultD, result[3], Math.ulp(2.0));
+	}
+	
+	/**
+	 * Test of cubicSplineInterpolantUniformSpacing method, of class WaveformUtils.
+	 */
+	@Test
+	public void testCubicSplineInterpolantUniformSpacingFromTo_FloatArgs()
+	{
+		System.out.println("cubicSplineInterpolant");
+		float[] y = new float[]{-10.0f, 0.0f, 0.3f, 0.6f, -0.2f, 3.0f, 100.0f};
+		double[] expResultA = new double[]{0.0f, 0.3f, 0.6f, -0.2f, 3.0f};
+		double[] expResultB = new double[]{0.15, 0.6, -0.75, 0.9, 0.0};
+		double[] expResultC = new double[]{0., 0.45, -1.8, 3.45, 0.0};
+		double[] expResultD = new double[]{0.15, -0.75, 1.75, -1.15, 0.0};
+		double[][] result = WaveformUtils.cubicSplineInterpolantUniformSpacing(y, 1, 6, 1.0);
+		assertArrayEquals(expResultA, result[0], Math.ulp(1.0f));
+		assertArrayEquals(expResultB, result[1], Math.ulp(2.0f));
+		assertArrayEquals(expResultC, result[2], Math.ulp(4.0f));
+		assertArrayEquals(expResultD, result[3], Math.ulp(2.0f));
+	}
+	
+	/**
 	 * Test of smoothingSplineInterpolantUniformSpacing method, of class WaveformUtils.
 	 */
 	@Test
@@ -1029,7 +1145,7 @@ public class WaveformUtilsTest
 	@Test
 	public void testSmoothingSplineInterpolantUniformSpacing_6args_2()
 	{
-		System.out.println("smoothingSplineInterpolant");
+		System.out.println("smoothingSplineInterpolantUniformSpacing");
 		float[] y = {2.0f, 1.0f, 2.0f, 1.0f, 2.0f, 1.0f, 2.0f, 1.0f, 1.0f, 5.0f, 2.0f, 3.0f, 4.0f, 4.0f, 6.0f, 2.0f, 1.0f};
 		int from = 8;
 		int to = 17;
@@ -1619,14 +1735,14 @@ public class WaveformUtilsTest
 		double a = 0.0;
 		double b = 0.0;
 		double c = 0.0;
-		double[] expResult = null;
+		double[] expResult = new double[0];
 		double[] result = WaveformUtils.quadraticRoots(a, b, c);
 		assertArrayEquals(expResult, result, Math.ulp(1.0));
 		
 		a = 4.0;
 		b = -20.0;
 		c = 26.0;
-		expResult = null;
+		expResult = new double[0];
 		result = WaveformUtils.quadraticRoots(a, b, c);
 		assertArrayEquals(expResult, result, Math.ulp(1.0));
 
@@ -1668,7 +1784,7 @@ public class WaveformUtilsTest
 		a = 0.0;
 		b = 0.0;
 		c = 1.0;
-		expResult = null;
+		expResult = new double[0];
 		result = WaveformUtils.quadraticRoots(a, b, c);
 		assertArrayEquals(expResult, result, Math.ulp(1.0));
 

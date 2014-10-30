@@ -1,7 +1,7 @@
 package waveformAnalysisForImageJTestPackage;
 
 
-import waveformAnalysisForImageJ.ZeroCrossings;
+import waveformAnalysisForImageJ.ZeroCrossingCount;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,19 +52,19 @@ public class ZeroCrossingsTest
 		float[] waveforms = new float[] {1.0f, 1.0f, 2.0f, -1.0f, 1.0f, 2.0f, -1.0f, 2.0f};
 		int recordLength = 8;
 		int[] expResult = new int[] {4};
-		int[] result = ZeroCrossings.execute(waveforms, recordLength);
+		int[] result = ZeroCrossingCount.execute(waveforms, recordLength);
 		assertArrayEquals(expResult, result);
 		
 		waveforms = new float[] {1.0f, 1.0f, 2.0f, -1.0f, 1.0f, 2.0f, -1.0f, 2.0f};
 		recordLength = 4;
 		expResult = new int[] {1, 2};
-		result = ZeroCrossings.execute(waveforms, recordLength);
+		result = ZeroCrossingCount.execute(waveforms, recordLength);
 		assertArrayEquals(expResult, result);		
 		
 		waveforms = new float[] {1.0f, 1.0f, 2.0f, 0.0f, 1.0f, 2.0f, 1.0f, 2.0f};
 		recordLength = 8;
 		expResult = new int[] {0};
-		result = ZeroCrossings.execute(waveforms, recordLength);
+		result = ZeroCrossingCount.execute(waveforms, recordLength);
 		assertArrayEquals(expResult, result);		
 	}
 
@@ -78,19 +78,19 @@ public class ZeroCrossingsTest
 		double[] waveforms = new double[] {1.0, 1.0, 2.0, -1.0, 1.0, 2.0, -1.0, 2.0};
 		int recordLength = 8;
 		int[] expResult = new int[] {4};
-		int[] result = ZeroCrossings.execute(waveforms, recordLength);
+		int[] result = ZeroCrossingCount.execute(waveforms, recordLength);
 		assertArrayEquals(expResult, result);
 		
 		waveforms = new double[] {1.0, 1.0, 2.0, -1.0, 1.0, 2.0, -1.0, 2.0};
 		recordLength = 4;
 		expResult = new int[] {1, 2};
-		result = ZeroCrossings.execute(waveforms, recordLength);
+		result = ZeroCrossingCount.execute(waveforms, recordLength);
 		assertArrayEquals(expResult, result);
 		
 		waveforms = new double[] {1.0, 1.0, 2.0, 0.0, 1.0, 2.0, 1.0, 2.0};
 		recordLength = 8;
 		expResult = new int[] {0};
-		result = ZeroCrossings.execute(waveforms, recordLength);
+		result = ZeroCrossingCount.execute(waveforms, recordLength);
 		assertArrayEquals(expResult, result);				
 	}
 

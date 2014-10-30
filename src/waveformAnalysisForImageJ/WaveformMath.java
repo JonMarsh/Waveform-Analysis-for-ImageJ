@@ -111,7 +111,7 @@ public class WaveformMath implements ExtendedPlugInFilter, DialogListener
 	 * length of {@code waveforms} is not evenly divisible by
 	 * {@code waveform.length}
 	 *
-	 * @param waveforms array of concatenated waveforms, assumed to of length
+	 * @param waveforms array of concatenated waveforms, assumed to be of length
 	 *                  {@code waveform.length}
 	 * @param waveform	single waveform with which to perform desired operation
 	 * @param operation {@code ADD} adds {@code waveform} to every record in
