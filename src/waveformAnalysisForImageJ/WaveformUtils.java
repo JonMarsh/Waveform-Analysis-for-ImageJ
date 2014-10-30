@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 Jon N. Marsh.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package waveformAnalysisForImageJ;
 
 import ij.ImagePlus;
@@ -14,6 +29,7 @@ import java.util.Arrays;
  */
 public class WaveformUtils
 {
+
 	public static final double DOUBLE_EPS = Math.ulp(1.0);
 	public static final double ONE_PLUS_DOUBLE_EPS = Math.nextUp(1.0);
 
@@ -1401,6 +1417,300 @@ public class WaveformUtils
 		return index;
 	}
 
+	//--------------------cubicSplineInterpolant Methods----------------------//
+	/**
+	 * Computes a natural (also known as "free", "unclamped") cubic spline
+	 * interpolation for the input data set {@code x[]}, assumed to be in
+	 * increasing order. Adapted from Apache Commons Math
+	 * {@link org.apache.commons.math3.analysis.interpolation#SplineInterpolator SplineInterpolater}.
+	 * <p>
+	 * This method returns a two-dimensional array consisting of polynomial
+	 * coefficients, defined over the subintervals determined by the x values,
+	 * {@code x[0]<x[i]...< x[n-1]}.
+	 * </p>
+	 * <p>
+	 * The cubic spline interpolation algorithm implemented is as described in
+	 * R.L. Burden, J.D. Faires, <u>Numerical Analysis</u>, 4th Ed., 1989,
+	 * PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
+	 * </p>
+	 *
+	 * @param x ordinal values in increasing order
+	 * @param y waveform values evaluated at points given in {@code x[]}
+	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
+	 *         first element is a copy of {@code y[]}, and the remaining
+	 *         elements are (in order) the first, second, and third derivatives
+	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 */
+	public static final double[][] cubicSplineInterpolant(double[] x, double[] y)
+	{
+		final int n = y.length;
+
+		// Differences between knot points
+		final double h[] = new double[n - 1];
+		for (int i = 0; i < n - 1; i++) {
+			h[i] = x[i + 1] - x[i];
+		}
+
+		final double mu[] = new double[n - 1];
+		final double z[] = new double[n];
+		mu[0] = 0d;
+		z[0] = 0d;
+		for (int i = 1; i < n - 1; i++) {
+			double g = 2d * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+			mu[i] = h[i] / g;
+			z[i] = (3d * (y[i + 1] * h[i - 1] - y[i] * (x[i + 1] - x[i - 1]) + y[i - 1] * h[i]) / (h[i - 1] * h[i]) - h[i - 1] * z[i - 1]) / g;
+		}
+
+		// cubic spline coefficients: coeffs[1] is linear, coeffs[2] quadratic, coeffs[3] is cubic (original y's are constants)
+		final double coeffs[][] = new double[4][n];
+
+		z[n - 1] = 0d;
+		coeffs[2][n - 1] = 0d;
+
+		for (int j = n - 2; j >= 0; j--) {
+			coeffs[2][j] = z[j] - mu[j] * coeffs[2][j + 1];
+			coeffs[1][j] = (y[j + 1] - y[j]) / h[j] - h[j] * (coeffs[2][j + 1] + 2d * coeffs[2][j]) / 3d;
+			coeffs[3][j] = (coeffs[2][j + 1] - coeffs[2][j]) / (3d * h[j]);
+		}
+		System.arraycopy(y, 0, coeffs[0], 0, n);
+
+		return coeffs;
+	}
+	
+	//--------------------cubicSplineInterpolant Methods----------------------//
+	/**
+	 * Computes a natural (also known as "free", "unclamped") cubic spline
+	 * interpolation for the input data set {@code x[]}, assumed to be in
+	 * increasing order. Adapted from Apache Commons Math
+	 * {@link org.apache.commons.math3.analysis.interpolation#SplineInterpolator SplineInterpolater}.
+	 * <p>
+	 * This method returns a two-dimensional array consisting of polynomial
+	 * coefficients, defined over the subintervals determined by the x values,
+	 * {@code x[0]<x[i]...< x[n-1]}.
+	 * </p>
+	 * <p>
+	 * The cubic spline interpolation algorithm implemented is as described in
+	 * R.L. Burden, J.D. Faires, <u>Numerical Analysis</u>, 4th Ed., 1989,
+	 * PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
+	 * </p>
+	 *
+	 * @param x ordinal values in increasing order
+	 * @param y waveform values evaluated at points given in {@code x[]}
+	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
+	 *         first element is a copy of {@code y[]}, and the remaining
+	 *         elements are (in order) the first, second, and third derivatives
+	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 */
+	public static final double[][] cubicSplineInterpolant(float[] x, float[] y)
+	{
+		final int n = y.length;
+
+		// Differences between knot points
+		final double h[] = new double[n - 1];
+		for (int i = 0; i < n - 1; i++) {
+			h[i] = x[i + 1] - x[i];
+		}
+
+		final double mu[] = new double[n - 1];
+		final double z[] = new double[n];
+		mu[0] = 0d;
+		z[0] = 0d;
+		for (int i = 1; i < n - 1; i++) {
+			double g = 2d * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1];
+			mu[i] = h[i] / g;
+			z[i] = (3d * (y[i + 1] * h[i - 1] - y[i] * (x[i + 1] - x[i - 1]) + y[i - 1] * h[i]) / (h[i - 1] * h[i]) - h[i - 1] * z[i - 1]) / g;
+		}
+
+		// cubic spline coefficients: coeffs[1] is linear, coeffs[2] quadratic, coeffs[3] is cubic (original y's are constants)
+		final double coeffs[][] = new double[4][n];
+
+		z[n - 1] = 0d;
+		coeffs[2][n - 1] = 0d;
+
+		for (int j = n - 2; j >= 0; j--) {
+			coeffs[2][j] = z[j] - mu[j] * coeffs[2][j + 1];
+			coeffs[1][j] = (y[j + 1] - y[j]) / h[j] - h[j] * (coeffs[2][j + 1] + 2d * coeffs[2][j]) / 3d;
+			coeffs[3][j] = (coeffs[2][j + 1] - coeffs[2][j]) / (3d * h[j]);
+		}
+		for (int j=0; j<n; j++) {
+			coeffs[0][j] = y[j];
+		}
+
+		return coeffs;
+	}
+
+	/**
+	 * Computes a natural (also known as "free", "unclamped") cubic spline
+	 * interpolation for the input data set {@code x[]}, assumed to be in
+	 * increasing order. Adapted from Apache Commons Math
+	 * {@link org.apache.commons.math3.analysis.interpolation#SplineInterpolator SplineInterpolater}.
+	 * <p>
+	 * This method returns a two-dimensional array consisting of polynomial
+	 * coefficients, and assumes that the elements are uniformly spaced with
+	 * interelement spacing given by {@code dx}.
+	 * </p>
+	 * <p>
+	 * The cubic spline interpolation algorithm implemented is as described in
+	 * R.L. Burden, J.D. Faires, <u>Numerical Analysis</u>, 4th Ed., 1989,
+	 * PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
+	 * </p>
+	 *
+	 * @param y  waveform values evaluated at points given in {@code x[]}
+	 * @param dx interelement spacing
+	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
+	 *         first element is a copy of {@code y[]}, and the remaining
+	 *         elements are (in order) the first, second, and third derivatives
+	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 */
+	public static final double[][] cubicSplineInterpolantUniformSpacing(double[] y, double dx)
+	{
+		return cubicSplineInterpolantUniformSpacing(y, 0, y.length, dx);
+	}
+	
+	/**
+	 * Computes a natural (also known as "free", "unclamped") cubic spline
+	 * interpolation for the input data set {@code x[]}, assumed to be in
+	 * increasing order. Adapted from Apache Commons Math
+	 * {@link org.apache.commons.math3.analysis.interpolation#SplineInterpolator SplineInterpolater}.
+	 * <p>
+	 * This method returns a two-dimensional array consisting of polynomial
+	 * coefficients, and assumes that the elements are uniformly spaced with
+	 * interelement spacing given by {@code dx}.
+	 * </p>
+	 * <p>
+	 * The cubic spline interpolation algorithm implemented is as described in
+	 * R.L. Burden, J.D. Faires, <u>Numerical Analysis</u>, 4th Ed., 1989,
+	 * PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
+	 * </p>
+	 *
+	 * @param y    waveform values evaluated at points given in {@code x[]}
+	 * @param from initial index of the range of {@code y[]} over which to
+	 *             compute the spline, inclusive
+	 * @param to   final index of the range of {@code y[]} over which to compute
+	 *             the spline, exclusive
+	 * @param dx   interelement spacing
+	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
+	 *         first element is a copy of {@code y[]}, and the remaining
+	 *         elements are (in order) the first, second, and third derivatives
+	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 */
+	public static final double[][] cubicSplineInterpolantUniformSpacing(double[] y, int from, int to, double dx)
+	{
+		final int n = to - from;
+
+		final double mu[] = new double[n - 1];
+		final double z[] = new double[n];
+		mu[0] = 0d;
+		z[0] = 0d;
+		for (int i = 1; i < n - 1; i++) {
+			double g = dx * (4.0 - mu[i - 1]);
+			mu[i] = dx / g;
+			z[i] = (3.0 * (y[from + i + 1] - 2.0 * y[from + i] + y[from + i - 1]) / dx - dx * z[i - 1]) / g;
+		}
+
+		// cubic spline coefficients: coeffs[1] is linear, coeffs[2] quadratic, coeffs[3] is cubic (original y's are constants)
+		final double coeffs[][] = new double[4][n];
+
+		z[n - 1] = 0d;
+		coeffs[2][n - 1] = 0d;
+
+		for (int j = n - 2; j >= 0; j--) {
+			coeffs[2][j] = z[j] - mu[j] * coeffs[2][j + 1];
+			coeffs[1][j] = (y[from + j + 1] - y[from + j]) / dx - dx * (coeffs[2][j + 1] + 2.0 * coeffs[2][j]) / 3.0;
+			coeffs[3][j] = (coeffs[2][j + 1] - coeffs[2][j]) / 3.0 * dx;
+		}
+		System.arraycopy(y, from, coeffs[0], 0, n);
+
+		return coeffs;
+	}
+	
+	/**
+	 * Computes a natural (also known as "free", "unclamped") cubic spline
+	 * interpolation for the input data set {@code x[]}, assumed to be in
+	 * increasing order. Adapted from Apache Commons Math
+	 * {@link org.apache.commons.math3.analysis.interpolation#SplineInterpolator SplineInterpolater}.
+	 * <p>
+	 * This method returns a two-dimensional array consisting of polynomial
+	 * coefficients, and assumes that the elements are uniformly spaced with
+	 * interelement spacing given by {@code dx}.
+	 * </p>
+	 * <p>
+	 * The cubic spline interpolation algorithm implemented is as described in
+	 * R.L. Burden, J.D. Faires, <u>Numerical Analysis</u>, 4th Ed., 1989,
+	 * PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
+	 * </p>
+	 *
+	 * @param y  waveform values evaluated at points given in {@code x[]}
+	 * @param dx interelement spacing
+	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
+	 *         first element is a copy of {@code y[]}, and the remaining
+	 *         elements are (in order) the first, second, and third derivatives
+	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 */
+	public static final double[][] cubicSplineInterpolantUniformSpacing(float[] y, double dx)
+	{
+		return cubicSplineInterpolantUniformSpacing(y, 0, y.length, dx);
+	}
+	
+	/**
+	 * Computes a natural (also known as "free", "unclamped") cubic spline
+	 * interpolation for the input data set {@code x[]}, assumed to be in
+	 * increasing order. Adapted from Apache Commons Math
+	 * {@link org.apache.commons.math3.analysis.interpolation#SplineInterpolator SplineInterpolater}.
+	 * <p>
+	 * This method returns a two-dimensional array consisting of polynomial
+	 * coefficients, and assumes that the elements are uniformly spaced with
+	 * interelement spacing given by {@code dx}.
+	 * </p>
+	 * <p>
+	 * The cubic spline interpolation algorithm implemented is as described in
+	 * R.L. Burden, J.D. Faires, <u>Numerical Analysis</u>, 4th Ed., 1989,
+	 * PWS-Kent, ISBN 0-53491-585-X, pp 126-131.
+	 * </p>
+	 *
+	 * @param y    waveform values evaluated at points given in {@code x[]}
+	 * @param from initial index of the range of {@code y[]} over which to
+	 *             compute the spline, inclusive
+	 * @param to   final index of the range of {@code y[]} over which to compute
+	 *             the spline, exclusive
+	 * @param dx   interelement spacing
+	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
+	 *         first element is a copy of {@code y[]}, and the remaining
+	 *         elements are (in order) the first, second, and third derivatives
+	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 */
+	public static final double[][] cubicSplineInterpolantUniformSpacing(float[] y, int from, int to, double dx)
+	{
+		final int n = to - from;
+
+		final double mu[] = new double[n - 1];
+		final double z[] = new double[n];
+		mu[0] = 0d;
+		z[0] = 0d;
+		for (int i = 1; i < n - 1; i++) {
+			double g = dx * (4.0 - mu[i - 1]);
+			mu[i] = dx / g;
+			z[i] = (3.0 * (y[from + i + 1] - 2.0 * y[from + i] + y[from + i - 1]) / dx - dx * z[i - 1]) / g;
+		}
+
+		// cubic spline coefficients: coeffs[1] is linear, coeffs[2] quadratic, coeffs[3] is cubic (original y's are constants)
+		final double coeffs[][] = new double[4][n];
+
+		z[n - 1] = 0d;
+		coeffs[2][n - 1] = 0d;
+
+		for (int j = n - 2; j >= 0; j--) {
+			coeffs[2][j] = z[j] - mu[j] * coeffs[2][j + 1];
+			coeffs[1][j] = (y[from + j + 1] - y[from + j]) / dx - dx * (coeffs[2][j + 1] + 2.0 * coeffs[2][j]) / 3.0;
+			coeffs[3][j] = (coeffs[2][j + 1] - coeffs[2][j]) / 3.0 * dx;
+		}
+		for (int j=0; j<n; j++) {
+			coeffs[0][j] = y[from+j];
+		}
+
+		return coeffs;
+	}
+
 	//--------------------smoothingSpline Methods-----------------------------//
 	/**
 	 * Computes interpolant values for input values {@code y[]} evaluated at
@@ -1436,6 +1746,11 @@ public class WaveformUtils
 	 */
 	public static final double[][] smoothingSplineInterpolant(double[] x, double[] y, double standardDeviation, double smoothingParameter)
 	{
+		// if no smoothing, then use cubic spline algorithm
+		if (smoothingParameter == 0.0) {
+			return cubicSplineInterpolant(x, y);
+		}
+		
 		int i, n1, n2, m1, m2, n;
 		double e, f, f2, g, h, p, s;
 		double[] shiftedX, shiftedY, r, r1, r2, t, t1, u, v, a, b, c, d;
@@ -1604,6 +1919,11 @@ public class WaveformUtils
 	 */
 	public static final double[][] smoothingSplineInterpolant(float[] x, float[] y, double standardDeviation, double smoothingParameter)
 	{
+		// if no smoothing, then use cubic spline algorithm
+		if (smoothingParameter == 0.0) {
+			return cubicSplineInterpolant(x, y);
+		}
+
 		int i, n1, n2, m1, m2, n;
 		double e, f, f2, g, h, p, s;
 		double[] shiftedX, shiftedY, r, r1, r2, t, t1, u, v, a, b, c, d;
@@ -1824,6 +2144,11 @@ public class WaveformUtils
 			double dx,
 			double smoothingParameter)
 	{
+		// revert to cubic spline smoothing if smoothingParameter is zero
+		if (smoothingParameter == 0.0) {
+			return cubicSplineInterpolantUniformSpacing(y, from, to, dx);
+		}
+		
 		int i;
 		int n = to - from;
 		double e, f, f2, g, h, p;
@@ -2004,6 +2329,11 @@ public class WaveformUtils
 			double dx,
 			double smoothingParameter)
 	{
+		// revert to cubic spline smoothing if smoothingParameter is zero
+		if (smoothingParameter == 0.0) {
+			return cubicSplineInterpolantUniformSpacing(y, from, to, dx);
+		}
+
 		int i;
 		int n = to - from;
 		double e, f, f2, g, h, p;
@@ -2997,12 +3327,13 @@ public class WaveformUtils
 	 * Computes real roots for quadratic equation of the form
 	 * {@code ax^2 + bx + c = 0}, given real coefficients {@code a}, {@code b},
 	 * and {@code c}. If there are two distinct roots, they are returned in a
-	 * two-element array. If there is a single root or two identical roots, the result
-	 * is returned in a single-element array. If there are no real-valued roots,
-	 * the function returns a zero-length array. Note that the discriminant
-	 * {@code b*b-4*a*c} contains the potential for catastrophic cancellation if
-	 * its two terms are nearly equal, so in this case the algorithm uses the
-	 * {@code java.math#BigDecimal BigDecimal} class to enhance computation precision.
+	 * two-element array. If there is a single root or two identical roots, the
+	 * result is returned in a single-element array. If there are no real-valued
+	 * roots, the function returns a zero-length array. Note that the
+	 * discriminant {@code b*b-4*a*c} contains the potential for catastrophic
+	 * cancellation if its two terms are nearly equal, so in this case the
+	 * algorithm uses the {@link java.math#BigDecimal BigDecimal} class to
+	 * enhance computation precision.
 	 *
 	 * @param a quadratic coefficient
 	 * @param b linear coefficient
@@ -3037,13 +3368,13 @@ public class WaveformUtils
 				}
 			}
 		} else {
-			double bb = b*b;
-			double fac = 4.0*a*c;
+			double bb = b * b;
+			double fac = 4.0 * a * c;
 			if (bb < fac) { // discriminant < 0.0
 				return new double[0];
 			}
 			double x = bb - fac;
-			if (bb/fac <= ONE_PLUS_DOUBLE_EPS) { // discriminant close to zero
+			if (bb / fac <= ONE_PLUS_DOUBLE_EPS) { // discriminant close to zero
 				BigDecimal discriminant = new BigDecimal(b);
 				discriminant = discriminant.multiply(discriminant);
 				BigDecimal fourac = new BigDecimal(-4.0);
