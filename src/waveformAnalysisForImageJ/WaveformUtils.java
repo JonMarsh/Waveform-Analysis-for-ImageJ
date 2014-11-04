@@ -1476,7 +1476,7 @@ public class WaveformUtils
 
 		return coeffs;
 	}
-	
+
 	//--------------------cubicSplineInterpolant Methods----------------------//
 	/**
 	 * Computes a natural (also known as "free", "unclamped") cubic spline
@@ -1532,7 +1532,7 @@ public class WaveformUtils
 			coeffs[1][j] = (y[j + 1] - y[j]) / h[j] - h[j] * (coeffs[2][j + 1] + 2d * coeffs[2][j]) / 3d;
 			coeffs[3][j] = (coeffs[2][j + 1] - coeffs[2][j]) / (3d * h[j]);
 		}
-		for (int j=0; j<n; j++) {
+		for (int j = 0; j < n; j++) {
 			coeffs[0][j] = y[j];
 		}
 
@@ -1566,7 +1566,7 @@ public class WaveformUtils
 	{
 		return cubicSplineInterpolantUniformSpacing(y, 0, y.length, dx);
 	}
-	
+
 	/**
 	 * Computes a natural (also known as "free", "unclamped") cubic spline
 	 * interpolation for the input data set {@code x[]}, assumed to be in
@@ -1623,7 +1623,7 @@ public class WaveformUtils
 
 		return coeffs;
 	}
-	
+
 	/**
 	 * Computes a natural (also known as "free", "unclamped") cubic spline
 	 * interpolation for the input data set {@code x[]}, assumed to be in
@@ -1651,7 +1651,7 @@ public class WaveformUtils
 	{
 		return cubicSplineInterpolantUniformSpacing(y, 0, y.length, dx);
 	}
-	
+
 	/**
 	 * Computes a natural (also known as "free", "unclamped") cubic spline
 	 * interpolation for the input data set {@code x[]}, assumed to be in
@@ -1704,8 +1704,8 @@ public class WaveformUtils
 			coeffs[1][j] = (y[from + j + 1] - y[from + j]) / dx - dx * (coeffs[2][j + 1] + 2.0 * coeffs[2][j]) / 3.0;
 			coeffs[3][j] = (coeffs[2][j + 1] - coeffs[2][j]) / 3.0 * dx;
 		}
-		for (int j=0; j<n; j++) {
-			coeffs[0][j] = y[from+j];
+		for (int j = 0; j < n; j++) {
+			coeffs[0][j] = y[from + j];
 		}
 
 		return coeffs;
@@ -1750,7 +1750,7 @@ public class WaveformUtils
 		if (smoothingParameter == 0.0) {
 			return cubicSplineInterpolant(x, y);
 		}
-		
+
 		int i, n1, n2, m1, m2, n;
 		double e, f, f2, g, h, p, s;
 		double[] shiftedX, shiftedY, r, r1, r2, t, t1, u, v, a, b, c, d;
@@ -2148,7 +2148,7 @@ public class WaveformUtils
 		if (smoothingParameter == 0.0) {
 			return cubicSplineInterpolantUniformSpacing(y, from, to, dx);
 		}
-		
+
 		int i;
 		int n = to - from;
 		double e, f, f2, g, h, p;
@@ -3338,8 +3338,8 @@ public class WaveformUtils
 	 * @param a quadratic coefficient
 	 * @param b linear coefficient
 	 * @param c constant term
-	 * @return array of distinct roots, or null if there are no real-valued
-	 *         roots
+	 * @return array of distinct roots in order from least to greatest, or
+	 *         zero-length array if there are no real-valued roots
 	 */
 	public static final double[] quadraticRoots(double a, double b, double c)
 	{
@@ -3383,7 +3383,7 @@ public class WaveformUtils
 				discriminant = discriminant.add(fourac);
 				x = discriminant.doubleValue();
 				if (x == 0.0) { // discriminant is truly zero to double precision
-					return new double[]{-b / (a + a)};
+					return new double[]{-b / (2.0 * a)};
 				}
 			}
 			double q = -0.5 * (b + Math.signum(b) * Math.sqrt(x));
@@ -3396,6 +3396,110 @@ public class WaveformUtils
 			} else {
 				return new double[]{r1};
 			}
+		}
+	}
+
+	/**
+	 * Computes real roots to the cubic equation
+	 * {@code x^3 + a*x^2 + b*x + c = 0}, given real coefficients {@code a},
+	 * {@code b}, and {@code c}. If there are three distinct roots, they are
+	 * returned in a three-element array. If there is a double root and a single
+	 * root, the results are returned in a two-element array. If there is a
+	 * single real root, the result is returned in a single-element array.
+	 * <p>
+	 * Code adapted from GSL poly/solve_cubic.c
+	 * </p>
+	 *
+	 * @param a quadratic coefficient
+	 * @param b linear coefficient
+	 * @param c constant term
+	 * @return array of distinct roots in order from least to greatest
+	 */
+	public static final double[] cubicRoots(double a, double b, double c)
+	{
+		if (c == 0.0) {
+			double[] qr = quadraticRoots(1.0, a, b);
+			if (qr.length == 2) {
+				if (qr[0] != 0.0 && qr[1] != 0.0) {
+					double[] output = new double[]{0.0, qr[0], qr[1]};
+					Arrays.sort(output);
+					return output;
+				} else if (qr[0] * qr[1] == 0.0) { // the zero root is already present in qr
+					return qr;
+				}
+			} else if (qr.length == 1) {
+				if (qr[0] > 0.0) {
+					return new double[]{0.0, qr[0]};
+				} else if (qr[0] < 0.0) {
+					return new double[]{qr[0], 0.0};
+				} else {
+					return qr;
+				}
+			} else {
+				return new double[]{0.0};
+			}
+		}
+
+		double q = (a * a - 3 * b);
+		double r = (2 * a * a * a - 9 * a * b + 27 * c);
+
+		double Q = q / 9;
+		double R = r / 54;
+
+		double Q3 = Q * Q * Q;
+		double R2 = R * R;
+
+		double CR2 = 729 * r * r;
+		double CQ3 = 2916 * q * q * q;
+
+		if (R == 0 && Q == 0) {
+			return new double[]{-a / 3.0};
+		} else if (CR2 == CQ3) {
+			/* this test is actually R2 == Q3, written in a form suitable
+			 for exact computation with integers */
+
+			/* Due to finite precision some double roots may be missed, and
+			 considered to be a pair of complex roots z = x +/- epsilon i
+			 close to the real axis. */
+			double sqrtQ = Math.sqrt(Q);
+
+			if (R > 0) {
+				return new double[]{-2.0 * sqrtQ - a / 3.0, sqrtQ - a / 3.0};
+			} else {
+				return new double[]{-sqrtQ - a / 3.0, 2.0 * sqrtQ - a / 3.0};
+			}
+		} else if (R2 < Q3) {
+			double ratio = Math.signum(R) * Math.sqrt(R2 / Q3);
+			double theta = Math.acos(ratio);
+			double norm = -2 * Math.sqrt(Q);
+			double x0 = norm * Math.cos(theta / 3) - a / 3;
+			double x1 = norm * Math.cos((theta + 2.0 * Math.PI) / 3) - a / 3;
+			double x2 = norm * Math.cos((theta - 2.0 * Math.PI) / 3) - a / 3;
+
+			/* Sort x0, x1, x2 into increasing order */
+			if (x0 > x1) {
+				double temp = x1;
+				x1 = x0;
+				x0 = temp;
+			}
+
+			if (x1 > x2) {
+				double temp = x2;
+				x2 = x1;
+				x1 = temp;
+
+				if (x0 > x1) {
+					temp = x1;
+					x1 = x0;
+					x0 = temp;
+				}
+			}
+			return new double[]{x0, x1, x2};
+		} else {
+			double sgnR = (R >= 0 ? 1 : -1);
+			double A = -sgnR * Math.pow(Math.abs(R) + Math.sqrt(R2 - Q3), 1.0 / 3.0);
+			double B = Q / A;
+			return new double[]{A + B - a / 3};
 		}
 	}
 }
