@@ -877,9 +877,9 @@ public class WaveformUtils
 	 * two, the returned array is just a copy of the original array. If input
 	 * array is zero-length, output is a new zero-length array.
 	 *
-	 * @param	a		   input array
-	 * @param	value	value used to pad input array
-	 * @return	copy of input array padded with {@code value}
+	 * @param a     input array
+	 * @param value	value used to pad input array
+	 * @return copy of input array padded with {@code value}
 	 */
 	public static final double[] padToPowerOf2(double[] a, double value)
 	{
@@ -897,9 +897,9 @@ public class WaveformUtils
 	 * evenly divisible by {@code waveformLength}, a zero-length array is
 	 * returned.
 	 *
-	 * @param	a				          input array
-	 * @param	waveformLength	length of individual waveforms within input array
-	 * @param	value			       value used to pad input array
+	 * @param a              input array
+	 * @param waveformLength length of individual waveforms within input array
+	 * @param value          value used to pad input array
 	 * @return	array consisting of concatenated copies of input waveforms, each
 	 *         padded to the next highest power of 2 with {@code value} (unless
 	 *         {@code waveformLength} is itself a power of 2, in which case the
@@ -3407,7 +3407,7 @@ public class WaveformUtils
 	 * root, the results are returned in a two-element array. If there is a
 	 * single real root, the result is returned in a single-element array.
 	 * <p>
-	 * Code adapted from GSL poly/solve_cubic.c
+	 * Code adapted from GSL poly/solve_cubic.c (<a href="http://www.gnu.org/software/gsl/">www.gnu.org/software/gsl/</a>)
 	 * </p>
 	 *
 	 * @param a quadratic coefficient
