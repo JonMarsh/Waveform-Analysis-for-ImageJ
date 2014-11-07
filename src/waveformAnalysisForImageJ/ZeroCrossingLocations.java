@@ -9,6 +9,7 @@ import ij.plugin.filter.ExtendedPlugInFilter;
 import ij.plugin.filter.PlugInFilterRunner;
 import ij.process.ImageProcessor;
 import java.awt.AWTEvent;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -95,25 +96,29 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 	{
 		int currentSlice = pfr.getSliceNumber();
 		float[] pixels = (float[]) ip.getPixels();	// CONVERT_TO_FLOAT flag is set, so this always works
-		float[] rootsProcessor = (float[]) (rootsStack.getProcessor(currentSlice).getPixels());
+		float[] rootsPixels = (float[]) (rootsStack.getProcessor(currentSlice).getPixels());
 
-		double[][] results = execute(pixels, width, interpolationChoice);
+		double[][][] results = execute(pixels, width, interpolationChoice);
 		for (int i = 0; i < height; i++) {
 			int offset = i * width;
 			int w = Math.min(width, results[i].length);
 			for (int j = 0; j < w; j++) {
-				rootsProcessor[offset + j] = (float) results[i][j];
+				rootsPixels[offset + j] = (float) (results[i][j][0] + results[i][j][1]);
 			}
 		}
 	}
 
 	/**
-	 * Returns an array of arrays representing the position (as a fractional
-	 * index) of zero-crossings in each record in {@code waveforms}, where each
-	 * record {@code recordLength} elements. Output is null if
-	 * {@code waveforms==null}, {@code recordLength<=1},
+	 * Returns an array of arrays of {@code [base_index, fractional_index]}
+	 * pairs representing the positions of zero-crossings in each record in
+	 * {@code waveforms}, where the number of elements in each record is given
+	 * by {@code recordLength}. Output is null if {@code waveforms==null}, {@code recordLength<=3},
 	 * {@code waveforms.length<recordLength}, or if {@code waveforms.length} is
-	 * not evenly divisible by {@code recordLength}.
+	 * not evenly divisible by {@code recordLength}. Each zero-crossing location
+	 * can be computed by adding the fractional index to the corresponding base
+	 * index. The fractional index is always greater than or equal to zero or
+	 * less than 1.0, so that accuracy is maintained and precision is
+	 * consistent, even when the integer base index is large.
 	 *
 	 * @param waveforms           one-dimensional array composed of a series of
 	 *                            concatenated records, each of size equal to
@@ -122,21 +127,26 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 	 * @param interpolationMethod {@link #LINEAR} for linear interpolation or
 	 *                            {@link #CUBIC_SPLINE} for natural cubic spline
 	 *                            interpolation between points in a waveform
-	 * @return array of variable length arrays, with the values in each subarray
-	 *         representing the positions (in fractional indices) of
-	 *         zero-crossings in each input waveform; if no zero-crossings occur
-	 *         in an individual waveform, the corresponding subarray is of
-	 *         length zero.
+	 * @return array of variable length arrays of
+	 *         {@code [base_index, fractional_index]} pairs. Zero crossings
+	 *         locations can be read for the k<sup>th</sup> record off from
+	 *         {@code [recordK][[base_index0, fractional_index0],...,[base_indexN, fractional_indexN]]}.
+	 *         Each zero-crossing location can be computed by adding the
+	 *         fractional index to the corresponding base index. The fractional
+	 *         index is always greater than or equal to zero or less than 1.0,
+	 *         and the base index should always be interpreted as an integer. If
+	 *         no zero-crossings occur in an individual record, the
+	 *         corresponding subarray is of length zero.
 	 */
-	public static double[][] execute(float[] waveforms, int recordLength, int interpolationMethod)
+	public static double[][][] execute(float[] waveforms, int recordLength, int interpolationMethod)
 	{
-		if (waveforms != null && recordLength > 0 && waveforms.length >= recordLength && waveforms.length % recordLength == 0) {
+		if (waveforms != null && recordLength > 3 && waveforms.length >= recordLength && waveforms.length % recordLength == 0) {
 
 			// compute number of records
 			int numRecords = waveforms.length / recordLength;
 
-			// allocate output array of arrays
-			double[][] roots = new double[numRecords][];
+			// allocate output array of arrays of {baseIndex, fractionalIndex} pairs
+			double[][][] roots = new double[numRecords][][];
 
 			// loop over all records
 			for (int i = 0; i < numRecords; i++) {
@@ -145,23 +155,24 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 				int offset = i * recordLength;
 
 				// initialize temporary ArrayList to hold roots
-				ArrayList<Double> rootList = new ArrayList<Double>();
+				ArrayList<double[]> rootList = new ArrayList<double[]>();
 
 				switch (interpolationMethod) {
 
 					case LINEAR: {
 						double y0 = waveforms[offset];
+						// loop over intervals between knots
 						for (int j = 0; j < recordLength - 1; j++) {
 							double y1 = waveforms[offset + j + 1];
-							if (y0 * y1 < 0.0) {
-								rootList.add(j + (y0 / (y0 - y1)));
-							} else if (y0 == 0.0 && y1 != 0.0) {
-								rootList.add(new Double(j));
+							if (y0 * y1 < 0.0) {	// zero-crossing occurs in this interval
+								rootList.add(new double[]{j, y0 / (y0 - y1)});
+							} else if (y0 == 0.0 && y1 != 0.0) {	// zero-crossing occurs at the beginning of the interval
+								rootList.add(new double[]{j, 0.0});
 							}
 							y0 = y1;
 						}
-						if (waveforms[offset + recordLength - 1] == 0.0 && waveforms[offset + recordLength - 2] != 0.0) {
-							rootList.add(new Double(recordLength - 1));
+						if (waveforms[offset + recordLength - 1] == 0.0 && waveforms[offset + recordLength - 2] != 0.0) {	// check last point to see if it's a zero crossing
+							rootList.add(new double[]{recordLength - 1, 0.0});
 						}
 						break;
 					}
@@ -174,11 +185,9 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 							// determine roots of cubic polynomial in this interval
 							double q = 1.0 / splineCoeffs[3][j];
 							double[] r = WaveformUtils.cubicRoots(q * splineCoeffs[2][j], q * splineCoeffs[1][j], q * splineCoeffs[0][j]);
-							if (r.length > 0) {
-								for (int k = 0; k < r.length; k++) {
-									if (r[k] >= 0 && j + r[k] < j + 1) {
-										rootList.add(j + r[k]);
-									}
+							for (int k = 0; k < r.length; k++) {
+								if (r[k] >= 0 && j + r[k] < j + 1) {
+									rootList.add(new double[]{j, r[k]});
 								}
 							}
 						}
@@ -187,39 +196,40 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 						double h = penultimateX - (recordLength - 2);
 						double penultimateY = splineCoeffs[0][recordLength - 2] + h * (splineCoeffs[1][recordLength - 2] + h * (splineCoeffs[2][recordLength - 2] + h * splineCoeffs[3][recordLength - 2]));
 						if (waveforms[offset + recordLength - 1] == 0.0 && penultimateY != 0.0) {
-							rootList.add(new Double(recordLength - 1));
+							rootList.add(new double[]{recordLength - 1, 0.0});
 						}
 						break;
 					}
 
 					default: {
-
 						break;
 					}
 
 				}
 
-				roots[i] = new double[rootList.size()];
+				roots[i] = new double[rootList.size()][2];
 				for (int j = 0; j < rootList.size(); j++) {
 					roots[i][j] = rootList.get(j);
 				}
-
 			}
 
 			return roots;
-
 		}
 
 		return null;
 	}
 
 	/**
-	 * Returns an array of arrays representing the position (as a fractional
-	 * index) of zero-crossings in each record in {@code waveforms}, where each
-	 * record {@code recordLength} elements. Output is null if
-	 * {@code waveforms==null}, {@code recordLength<=1},
+	 * Returns an array of arrays of {@code [base_index, fractional_index]}
+	 * pairs representing the positions of zero-crossings in each record in
+	 * {@code waveforms}, where the number of elements in each record is given
+	 * by {@code recordLength}. Output is null if {@code waveforms==null}, {@code recordLength<=3},
 	 * {@code waveforms.length<recordLength}, or if {@code waveforms.length} is
-	 * not evenly divisible by {@code recordLength}.
+	 * not evenly divisible by {@code recordLength}. Each zero-crossing location
+	 * can be computed by adding the fractional index to the corresponding base
+	 * index. The fractional index is always greater than or equal to zero or
+	 * less than 1.0, so that accuracy is maintained and precision is
+	 * consistent, even when the integer base index is large.
 	 *
 	 * @param waveforms           one-dimensional array composed of a series of
 	 *                            concatenated records, each of size equal to
@@ -228,21 +238,26 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 	 * @param interpolationMethod {@link #LINEAR} for linear interpolation or
 	 *                            {@link #CUBIC_SPLINE} for natural cubic spline
 	 *                            interpolation between points in a waveform
-	 * @return array of variable length arrays, with the values in each subarray
-	 *         representing the positions (in fractional indices) of
-	 *         zero-crossings in each input waveform; if no zero-crossings occur
-	 *         in an individual waveform, the corresponding subarray is of
-	 *         length zero.
+	 * @return array of variable length arrays of
+	 *         {@code [base_index, fractional_index]} pairs. Zero crossings
+	 *         locations can be read for the k<sup>th</sup> record off from
+	 *         {@code [recordK][[base_index0, fractional_index0],...,[base_indexN, fractional_indexN]]}.
+	 *         Each zero-crossing location can be computed by adding the
+	 *         fractional index to the corresponding base index. The fractional
+	 *         index is always greater than or equal to zero or less than 1.0,
+	 *         and the base index should always be interpreted as an integer. If
+	 *         no zero-crossings occur in an individual record, the
+	 *         corresponding subarray is of length zero.
 	 */
-	public static double[][] execute(double[] waveforms, int recordLength, int interpolationMethod)
+	public static double[][][] execute(double[] waveforms, int recordLength, int interpolationMethod)
 	{
-		if (waveforms != null && recordLength > 0 && waveforms.length >= recordLength && waveforms.length % recordLength == 0) {
+		if (waveforms != null && recordLength > 3 && waveforms.length >= recordLength && waveforms.length % recordLength == 0) {
 
 			// compute number of records
 			int numRecords = waveforms.length / recordLength;
 
-			// allocate output array of arrays
-			double[][] roots = new double[numRecords][];
+			// allocate output array of arrays of {baseIndex, fractionalIndex} pairs
+			double[][][] roots = new double[numRecords][][];
 
 			// loop over all records
 			for (int i = 0; i < numRecords; i++) {
@@ -251,23 +266,24 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 				int offset = i * recordLength;
 
 				// initialize temporary ArrayList to hold roots
-				ArrayList<Double> rootList = new ArrayList<Double>();
+				ArrayList<double[]> rootList = new ArrayList<double[]>();
 
 				switch (interpolationMethod) {
 
 					case LINEAR: {
 						double y0 = waveforms[offset];
+						// loop over intervals between knots
 						for (int j = 0; j < recordLength - 1; j++) {
 							double y1 = waveforms[offset + j + 1];
-							if (y0 * y1 < 0.0) {
-								rootList.add(j + (y0 / (y0 - y1)));
-							} else if (y0 == 0.0 && y1 != 0.0) {
-								rootList.add(new Double(j));
+							if (y0 * y1 < 0.0) {	// zero-crossing occurs in this interval
+								rootList.add(new double[]{j, y0 / (y0 - y1)});
+							} else if (y0 == 0.0 && y1 != 0.0) {	// zero-crossing occurs at the beginning of the interval
+								rootList.add(new double[]{j, 0.0});
 							}
 							y0 = y1;
 						}
-						if (waveforms[offset + recordLength - 1] == 0.0 && waveforms[offset + recordLength - 2] != 0.0) {
-							rootList.add(new Double(recordLength - 1));
+						if (waveforms[offset + recordLength - 1] == 0.0 && waveforms[offset + recordLength - 2] != 0.0) {	// check last point to see if it's a zero crossing
+							rootList.add(new double[]{recordLength - 1, 0.0});
 						}
 						break;
 					}
@@ -280,11 +296,9 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 							// determine roots of cubic polynomial in this interval
 							double q = 1.0 / splineCoeffs[3][j];
 							double[] r = WaveformUtils.cubicRoots(q * splineCoeffs[2][j], q * splineCoeffs[1][j], q * splineCoeffs[0][j]);
-							if (r.length > 0) {
-								for (int k = 0; k < r.length; k++) {
-									if (r[k] >= 0 && j + r[k] < j + 1) {
-										rootList.add(j + r[k]);
-									}
+							for (int k = 0; k < r.length; k++) {
+								if (r[k] >= 0 && j + r[k] < j + 1) {
+									rootList.add(new double[]{j, r[k]});
 								}
 							}
 						}
@@ -293,27 +307,42 @@ public class ZeroCrossingLocations implements ExtendedPlugInFilter, DialogListen
 						double h = penultimateX - (recordLength - 2);
 						double penultimateY = splineCoeffs[0][recordLength - 2] + h * (splineCoeffs[1][recordLength - 2] + h * (splineCoeffs[2][recordLength - 2] + h * splineCoeffs[3][recordLength - 2]));
 						if (waveforms[offset + recordLength - 1] == 0.0 && penultimateY != 0.0) {
-							rootList.add(new Double(recordLength - 1));
+							rootList.add(new double[]{recordLength - 1, 0.0});
 						}
 						break;
 					}
 
 					default: {
-
 						break;
 					}
 
 				}
 
-				roots[i] = new double[rootList.size()];
+				roots[i] = new double[rootList.size()][2];
 				for (int j = 0; j < rootList.size(); j++) {
 					roots[i][j] = rootList.get(j);
 				}
-
 			}
 
 			return roots;
+		}
 
+		return null;
+	}
+
+	public final double[][] toDouble(BigDecimal[][] a)
+	{
+		if (a != null) {
+			double[][] b = new double[a.length][];
+			for (int i = 0; i < a.length; i++) {
+				if (a[i] != null) {
+					b[i] = new double[a[i].length];
+					for (int j = 0; j < a[i].length; j++) {
+						b[i][j] = a[i][j].doubleValue();
+					}
+				}
+			}
+			return b;
 		}
 
 		return null;
