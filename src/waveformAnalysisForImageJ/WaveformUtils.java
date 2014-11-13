@@ -3374,7 +3374,8 @@ public class WaveformUtils
 				return new double[0];
 			}
 			double x = bb - fac;
-			if (bb / fac <= ONE_PLUS_DOUBLE_EPS) { // discriminant close to zero
+			double fraction = bb/fac;
+			if (fraction <= ONE_PLUS_DOUBLE_EPS && fraction >= 1.0) { // discriminant close to zero
 				BigDecimal discriminant = new BigDecimal(b);
 				discriminant = discriminant.multiply(discriminant);
 				BigDecimal fourac = new BigDecimal(-4.0);
