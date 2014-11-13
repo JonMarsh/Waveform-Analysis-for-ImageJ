@@ -42,15 +42,15 @@ public class ZeroCrossingLocationsTest
 		float[] waveforms = new float[]{0.0f, 2.0f, -0.5f, -1.0f, -0.25f, 2.5f, 0.0f, 1.0f};
 		int recordLength = 8;
 		int interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.LINEAR;
-		double[][] expResult = new double[][]{{0.0, 1.8, 4.090909090909091, 6.0}};
-		double[][] result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		double[][][] expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.8}, {4.0, 0.090909090909090909}, {6.0, 0.0}}};
+		double[][][] result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		assertArrayEquals(expResult, result);
 		
 		System.out.println("execute, float args, CUBIC_SPLINE");
 		waveforms = new float[]{0.0f, 2.0f, -0.5f, -1.0f, -0.25f, 2.5f, 0.0f, 1.0f};
 		recordLength = 8;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.8019907962206931, 4.087241479326511, 6.0, 6.504938459126981}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.8019907962206931}, {4.0, 0.08724147932651083}, {6.0, 0.0}, {6.0, 0.504938459126981}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
@@ -59,7 +59,7 @@ public class ZeroCrossingLocationsTest
 		waveforms = new float[]{0.0f, 2.0f, -0.5f, -1.0f, -0.25f, 2.5f, 0.0f, 1.0f, 0.0f, 2.0f, -0.5f, -1.0f, -0.25f, 2.5f, 0.0f, 1.0f};
 		recordLength = 8;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.8019907962206931, 4.087241479326511, 6.0, 6.504938459126981}, {0.0, 1.8019907962206931, 4.087241479326511, 6.0, 6.504938459126981}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.8019907962206931}, {4.0, 0.08724147932651083}, {6.0, 0.0}, {6.0, 0.504938459126981}}, {{0.0, 0.0}, {1.0, 0.8019907962206931}, {4.0, 0.08724147932651083}, {6.0, 0.0}, {6.0, 0.504938459126981}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
@@ -68,7 +68,7 @@ public class ZeroCrossingLocationsTest
 		waveforms = new float[]{0.0f, -0.5f, 0.23f, 0.95f, -0.14f, -0.02f, -0.02f, -0.21f, 0.32f, 0.25f, 0.5f, -1.13f, -1.44f, -0.1f, -0.38414905f};
 		recordLength = 15;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.7929222663875937, 3.8466182063595777, 5.062666304702919, 5.928391491423962, 7.405626078693919, 10.381710195705995, 13.280986998966464, 13.282012757263253}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.7929222663875938}, {3.0, 0.846618206359578}, {5.0, 0.06266630470291856}, {5.0, 0.9283914914239626}, {7.0, 0.4056260786939184}, {10.0, 0.3817101957059963}, {13.0, 0.2809869989664636}, {13.0, 0.2820127572632537}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
@@ -77,11 +77,44 @@ public class ZeroCrossingLocationsTest
 		waveforms = new float[]{0.0f, -0.5f, 0.23f, 0.95f, -0.14f, -0.02f, -0.02f, -0.21f, 0.32f, 0.25f, 0.5f, -1.13f, -1.44f, -0.1f, -0.38414905f, 0.0f};
 		recordLength = 16;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.792922276517499, 3.846618094712091, 5.062667218361916, 5.928387958033918, 7.405667852173494, 10.382493632658154, 15.0}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.7929222765174989}, {3.0, 0.8466180947120909}, {5.0, 0.06266721836191635}, {5.0, 0.9283879580339174}, {7.0, 0.40566785217349377}, {10.0, 0.382493632658153}, {15.0, 0.0}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
-	}
+
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = new float[]{0.0f, -0.5f, 0.23f, 0.95f, -0.14f, -0.02f, -0.02f, -0.21f, 0.32f, 0.25f, 0.5f, -1.13f, -1.44f, -0.1f, -0.38414905f, 0.0f};
+		recordLength = 17;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = new float[]{0.0f, -0.5f, 0.23f, 0.95f, -0.14f, -0.02f, -0.02f, -0.21f, 0.32f, 0.25f, 0.5f, -1.13f, -1.44f, -0.1f, -0.38414905f, 0.0f};
+		recordLength = 15;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+		
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = new float[]{0.0f, -0.5f, 0.23f, 0.95f, -0.14f, -0.02f, -0.02f, -0.21f, 0.32f, 0.25f, 0.5f, -1.13f, -1.44f, -0.1f, -0.38414905f, 0.0f};
+		recordLength = 0;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+		
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = null;
+		recordLength = 8;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+		
+}
 		
 
 	/**
@@ -94,15 +127,15 @@ public class ZeroCrossingLocationsTest
 		double[] waveforms = new double[]{0.0, 2.0, -0.5, -1.0, -0.25, 2.5, 0.0, 1.0};
 		int recordLength = 8;
 		int interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.LINEAR;
-		double[][] expResult = new double[][]{{0.0, 1.8, 4.090909090909091, 6.0}};
-		double[][] result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		double[][][] expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.8}, {4.0, 0.090909090909090909}, {6.0, 0.0}}};
+		double[][][] result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		assertArrayEquals(expResult, result);
 		
 		System.out.println("execute, double args, CUBIC_SPLINE");
 		waveforms = new double[]{0.0, 2.0, -0.5, -1.0, -0.25, 2.5, 0.0, 1.0};
 		recordLength = 8;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.8019907962206931, 4.087241479326511, 6.0, 6.504938459126981}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.8019907962206931}, {4.0, 0.08724147932651083}, {6.0, 0.0}, {6.0, 0.504938459126981}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
@@ -111,7 +144,7 @@ public class ZeroCrossingLocationsTest
 		waveforms = new double[]{0.0, 2.0, -0.5, -1.0, -0.25, 2.5, 0.0, 1.0, 0.0, 2.0, -0.5, -1.0, -0.25, 2.5, 0.0, 1.0};
 		recordLength = 8;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.8019907962206931, 4.087241479326511, 6.0, 6.504938459126981}, {0.0, 1.8019907962206931, 4.087241479326511, 6.0, 6.504938459126981}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.8019907962206931}, {4.0, 0.08724147932651083}, {6.0, 0.0}, {6.0, 0.504938459126981}}, {{0.0, 0.0}, {1.0, 0.8019907962206931}, {4.0, 0.08724147932651083}, {6.0, 0.0}, {6.0, 0.504938459126981}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
@@ -120,7 +153,7 @@ public class ZeroCrossingLocationsTest
 		waveforms = new double[]{0.0, -0.5, 0.23, 0.95, -0.14, -0.02, -0.02, -0.21, 0.32, 0.25, 0.5, -1.13, -1.44, -0.1, -0.38414905};
 		recordLength = 15;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.7929222826067188, 3.846618243685472, 5.062666305416682, 5.92839149147339, 7.40562607122368, 10.381710191338657, 13.280992499581103, 13.28200724341862}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.7929222826067188}, {3.0, 0.8466182436854719}, {5.0, 0.06266630541668228}, {5.0, 0.9283914914733904}, {7.0, 0.4056260712236802}, {10.0, 0.381710191338657}, {13.0, 0.28099249958110384}, {13.0, 0.28200724341862093}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
@@ -129,12 +162,43 @@ public class ZeroCrossingLocationsTest
 		waveforms = new double[]{0.0, -0.5, 0.23, 0.95, -0.14, -0.02, -0.02, -0.21, 0.32, 0.25, 0.5, -1.13, -1.44, -0.1, -0.38414905, 0.0};
 		recordLength = 16;
 		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
-		expResult = new double[][]{{0.0, 1.792922292736623, 3.846618132037994, 5.062667219075674, 5.928387958083455, 7.405667844700292, 10.382493628269565, 15.0}};
+		expResult = new double[][][]{{{0.0, 0.0}, {1.0, 0.7929222927366231}, {3.0, 0.846618132037994}, {5.0, 0.06266721907567385}, {5.0, 0.9283879580834553}, {7.0, 0.405667844700292}, {10.0, 0.3824936282695642}, {15.0, 0.0}}};
 		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
 		System.out.println(Arrays.toString(result[0]));
 		assertArrayEquals(expResult, result);
 		
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = new double[]{0.0, -0.5, 0.23, 0.95, -0.14, -0.02, -0.02, -0.21, 0.32, 0.25, 0.5, -1.13, -1.44, -0.1, -0.38414905, 0.0};
+		recordLength = 17;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = new double[]{0.0, -0.5, 0.23, 0.95, -0.14, -0.02, -0.02, -0.21, 0.32, 0.25, 0.5, -1.13, -1.44, -0.1, -0.38414905, 0.0};
+		recordLength = 15;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+		
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = new double[]{0.0, -0.5, 0.23, 0.95, -0.14, -0.02, -0.02, -0.21, 0.32, 0.25, 0.5, -1.13, -1.44, -0.1, -0.38414905, 0.0};
+		recordLength = 0;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+		
+		System.out.println("execute, float args, CUBIC_SPLINE");
+		waveforms = null;
+		recordLength = 8;
+		interpolationMethod = waveformAnalysisForImageJ.ZeroCrossingLocations.CUBIC_SPLINE;
+		expResult = null;
+		result = ZeroCrossingLocations.execute(waveforms, recordLength, interpolationMethod);
+		assertArrayEquals(expResult, result);
+		
 	}
 
-	
 }
