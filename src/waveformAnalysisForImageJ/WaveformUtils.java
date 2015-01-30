@@ -754,48 +754,104 @@ public class WaveformUtils
 		}
 	}
 
-	public static final double[] fftRealPowerOf2Forward(double ar[])
+	public static final void fftRealPowerOf2Forward(double ar[], double[] ai)
 	{
 		int nn = ar.length;
 		int n = nn / 2;
-
-		// initialize real and imaginary arrays with even and odd element indices of input real array
-		double[] re = new double[n];
-		double[] im = new double[n];
+		double delta = Math.PI/n;
+		double sinHalfDelta = Math.sin(0.5*delta);
+		double alpha = 2*sinHalfDelta*sinHalfDelta;
+		double beta = Math.sin(delta);
+		
+		// initialize real and imaginary arrays with odd and even element indices of input real array
 		for (int i = 0; i < n; i++) {
-			int j = 2 * i;
-			re[i] = ar[j];
-			im[i] = ar[j + 1];
+			ai[i] = ar[2*i+1];
+			ar[i] = ar[2*i];
 		}
-
+		
 		// perform forward FFT using first half of real and imaginary parts
-		fftComplexPowerOf2(re, im, true);
-
-		// initialize output imaginary array
-		double[] ai = new double[nn];
-
-		// sort
-		double delta = Math.PI / n;
-		double arg = delta;
+		fftComplexPowerOf2(ar, ai, 0, n, true);
+		
+		// set up trig recursions
+		double cosNDelta = 1 - alpha;
+		double sinNDelta = beta;
+		double cosNPlusOneDelta, sinNPlusOneDelta;
+		
+		// store intermediate results in second (redundant) half of input arrays
 		for (int i = 1; i < n; i++) {
-			double c = Math.cos(arg);
-			double s = Math.sin(arg);
-			double a1 = re[i] + re[n - i];
-			double a2 = re[i] - re[n - i];
-			double b1 = im[i] + im[n - i];
-			double b2 = im[i] - im[n - i];
-
-			ar[i] = 0.5 * (a1 + c * b1 - s * a2);
-			ar[nn - i] = ar[i];
-			ai[i] = 0.5 * (b2 - s * b1 - c * a2);
-			ai[nn - i] = -ai[i];
-
-			arg += delta;
+			ar[i+n] = 0.5 * (ar[i] + ar[n - i] + cosNDelta * (ai[i] + ai[n - i]) - sinNDelta * (ar[i] - ar[n - i]));
+			ai[i+n] = 0.5 * (ai[i] - ai[n - i] - sinNDelta * (ai[i] + ai[n - i]) - cosNDelta * (ar[i] - ar[n - i]));
+			cosNPlusOneDelta = cosNDelta - (alpha * cosNDelta + beta * sinNDelta);
+			sinNPlusOneDelta = sinNDelta - (alpha * sinNDelta - beta * cosNDelta);
+			cosNDelta = cosNPlusOneDelta;
+			sinNDelta = sinNPlusOneDelta;
 		}
-		ar[n] = ar[0] = re[0] + im[0];
-		ai[n] = ai[0] = 0.0;
 
-		return ai;
+		// reorder results
+		double ar0 = ar[0] + ai[0];
+		double arn = ar[0] - ai[0];
+		ar[0] = ar0;
+		ai[0] = 0.0;
+		for (int i=1; i<n; i++) {
+			ar[i] = ar[i+n];
+			ai[i] = ai[i+n];
+		}
+		ar[n] = arn;
+		ai[n] = 0.0;
+		
+		// overwrite intermediate results with symmetric/antisymmetric copies
+		for (int i=1; i<n; i++) {
+			ar[2*n-i] = ar[i];
+			ai[2*n-i] = -ai[i];
+		}
+		
+	}
+	
+	public static final void fftRealPowerOf2Inverse(double ar[], double[] ai)
+	{
+		int nn = ar.length;
+		int n = nn / 2;
+		double delta = -Math.PI/n;
+		double sinHalfDelta = Math.sin(0.5*delta);
+		double alpha = 2*sinHalfDelta*sinHalfDelta;
+		double beta = Math.sin(delta);
+
+		// set up trig recursions
+		double cosNDelta = 1 - alpha;
+		double sinNDelta = beta;
+		double cosNPlusOneDelta, sinNPlusOneDelta;
+		
+		// store intermediate results in second (redundant) half of input arrays
+		for (int i = 1; i < n; i++) {
+			ar[i+n] = 0.5 * (ar[i] + ar[n - i] + cosNDelta * (ai[i] + ai[n - i]) - sinNDelta * (ar[i] - ar[n - i]));
+			ai[i+n] = 0.5 * (ai[i] - ai[n - i] - sinNDelta * (ai[i] + ai[n - i]) - cosNDelta * (ar[i] - ar[n - i]));
+			cosNPlusOneDelta = cosNDelta - (alpha * cosNDelta + beta * sinNDelta);
+			sinNPlusOneDelta = sinNDelta - (alpha * sinNDelta - beta * cosNDelta);
+			cosNDelta = cosNPlusOneDelta;
+			sinNDelta = sinNPlusOneDelta;
+		}
+
+		// perform inverse FFT using second half of real and imaginary parts
+		fftComplexPowerOf2(ar, ai, n, nn, false);
+		
+		// reorder results
+		double ar0 = ar[n] + ai[n];
+		double arn = ar[n] - ai[n];
+		ar[0] = ar0;
+		ai[0] = 0.0;
+		for (int i=1; i<n; i++) {
+			ar[i] = ar[i+n];
+			ai[i] = ai[i+n];
+		}
+		ar[n] = arn;
+		ai[n] = 0.0;
+		
+		// overwrite intermediate results with symmetric/antisymmetric copies
+		for (int i=1; i<n; i++) {
+			ar[2*n-i] = ar[i];
+			ai[2*n-i] = -ai[i];
+		}
+
 	}
 
 	//--------------------hilbertTransform Methods----------------------------//
@@ -1438,7 +1494,7 @@ public class WaveformUtils
 	 * @param y waveform values evaluated at points given in {@code x[]}
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third derivatives
+	 *         elements are (in order) the first, second, and third polynomial coefficients
 	 *         of {@code y[]} evaluated at the points in {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolant(double[] x, double[] y)
@@ -1498,7 +1554,7 @@ public class WaveformUtils
 	 * @param y waveform values evaluated at points given in {@code x[]}
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third derivatives
+	 *         elements are (in order) the first, second, and third polynomial coefficients
 	 *         of {@code y[]} evaluated at the points in {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolant(float[] x, float[] y)
@@ -1559,7 +1615,7 @@ public class WaveformUtils
 	 * @param dx interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third derivatives
+	 *         elements are (in order) the first, second, and third polynomial coefficients
 	 *         of {@code y[]} evaluated at the points in {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(double[] y, double dx)
@@ -1591,7 +1647,7 @@ public class WaveformUtils
 	 * @param dx   interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third derivatives
+	 *         elements are (in order) the first, second, and third polynomial coefficients
 	 *         of {@code y[]} evaluated at the points in {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(double[] y, int from, int to, double dx)
@@ -1644,7 +1700,7 @@ public class WaveformUtils
 	 * @param dx interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third derivatives
+	 *         elements are (in order) the first, second, and third polynomial coefficients
 	 *         of {@code y[]} evaluated at the points in {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(float[] y, double dx)
@@ -1676,7 +1732,7 @@ public class WaveformUtils
 	 * @param dx   interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third derivatives
+	 *         elements are (in order) the first, second, and third polynomial coefficients
 	 *         of {@code y[]} evaluated at the points in {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(float[] y, int from, int to, double dx)
@@ -1741,7 +1797,7 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third derivatives of {@code y[]} evaluated at the points in
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the points in
 	 *         {@code x[]}
 	 */
 	public static final double[][] smoothingSplineInterpolant(double[] x, double[] y, double standardDeviation, double smoothingParameter)
@@ -1914,7 +1970,7 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third derivatives of {@code y[]} evaluated at the points in
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the points in
 	 *         {@code x[]}
 	 */
 	public static final double[][] smoothingSplineInterpolant(float[] x, float[] y, double standardDeviation, double smoothingParameter)
@@ -2087,7 +2143,7 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third derivatives of {@code y[]} evaluated at the indices
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the indices
 	 *         between {@code 0} and {@code y.length}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(double[] y,
@@ -2271,7 +2327,7 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third derivatives of {@code y[]} evaluated at the indices
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the indices
 	 *         between {@code 0} and {@code y.length}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(float[] y,
@@ -2318,7 +2374,7 @@ public class WaveformUtils
 	 * @return	a two-dimensional array of dimension {@code [4][to-from]}, where
 	 *         the first element is an array of smoothed values of {@code y[]}
 	 *         between {@code from} and {@code to}, and whose remaining elements
-	 *         are (in order) the first, second, and third derivatives of
+	 *         are (in order) the first, second, and third polynomial coefficients of
 	 *         {@code y[]} evaluated at the indices between {@code from} and
 	 *         {@code to}
 	 */
