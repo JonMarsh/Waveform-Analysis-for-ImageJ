@@ -519,16 +519,41 @@ public class WaveformUtilsTest
 	{
 		System.out.println("fftRealPowerOf2Forward");
 		double[] ar = new double[]{1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 0.0, 0.0};
-		double[] ai = WaveformUtils.fftRealPowerOf2Forward(ar);
-		WaveformUtils.fftRealPowerOf2Forward(ar);
+		double[] ai = new double[ar.length];
+		WaveformUtils.fftRealPowerOf2Forward(ar, ai);
 		double[] expResultRe = new double[]{8.0, -1.4142135623730951, 0.0, 1.4142135623730951, 0.0, 1.4142135623730951, 0.0, -1.4142135623730951};
 		double[] expResultIm = new double[]{0.0, -3.414213562373095, 0.0, 0.5857864376269049, 0.0, -0.5857864376269049, 0.0, 3.414213562373095};
-		System.out.println(Arrays.toString(ar));
-		System.out.println(Arrays.toString(ai));
+		assertArrayEquals(expResultRe, ar, Math.ulp(10.0));
+		assertArrayEquals(expResultIm, ai, Math.ulp(10.0));
+		
+		ar = new double[]{1, 4, 3, -2, -2.2, 0, 3, -1};
+		ai = new double[ar.length];
+		WaveformUtils.fftRealPowerOf2Forward(ar, ai);
+		expResultRe = new double[]{5.8, 6.7355339059327379, -7.2, -0.3355339059327377, 3.8, -0.3355339059327377, -7.2, 6.7355339059327379};
+		expResultIm = new double[]{0.0, -2.1213203435596428, -7.0, -2.1213203435596428, 0.0, 2.1213203435596428, 7.0, 2.1213203435596428};
 		assertArrayEquals(expResultRe, ar, Math.ulp(10.0));
 		assertArrayEquals(expResultIm, ai, Math.ulp(10.0));
 	}
 
+/**
+	 * Test of fftRealPowerOf2Forward method, of class WaveformUtils.
+	 */
+	@Test
+	public void testFftRealPowerOf2Inverse()
+	{
+		System.out.println("fftRealPowerOf2Inverse");
+		double[] ar = new double[]{8.0, -1.4142135623730951, 0.0, 1.4142135623730951, 0.0, 1.4142135623730951, 0.0, -1.4142135623730951};
+		double[] ai = new double[]{0.0, -3.414213562373095, 0.0, 0.5857864376269049, 0.0, -0.5857864376269049, 0.0, 3.414213562373095};
+		WaveformUtils.fftRealPowerOf2Inverse(ar, ai);
+		double[] expResultRe = new double[]{1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 0.0, 0.0};
+		double[] expResultIm = new double[ar.length];
+		System.out.println(Arrays.toString(ar));
+		System.out.println(Arrays.toString(ai));
+		assertArrayEquals(expResultRe, ar, Math.ulp(10.0));
+		assertArrayEquals(expResultIm, ai, Math.ulp(10.0));
+		
+	}	
+	
 	/**
 	 * Test of hilbertTransform method, of class WaveformUtils.
 	 */
@@ -1906,6 +1931,26 @@ public class WaveformUtilsTest
 		expResult = new double[]{1.0, 1.000000021073424};
 		result = WaveformUtils.quadraticRoots(a, b, c);
 		assertArrayEquals(expResult, result, Math.ulp(1.0));
-
+		
+		a = 10.27;
+		b = -59.22;
+		c = 85.37;
+		expResult = new double[]{2.878587715910692, 2.8877219238166694};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(3.0));
+		
+		a = 10.28;
+		b = -59.24;
+		c = 85.34;
+		expResult = new double[]{2.8597460379252646, 2.902899876471623};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(3.0));
+		
+		a = 1.0;
+		b = 2.000000000000002;
+		c = 1.0;
+		expResult = new double[]{-1.0000000471216102, -0.999999952878392};
+		result = WaveformUtils.quadraticRoots(a, b, c);
+		assertArrayEquals(expResult, result, Math.ulp(1.0));
 	}
 }
