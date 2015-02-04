@@ -32,6 +32,8 @@ public class WaveformUtils
 
 	public static final double DOUBLE_EPS = Math.ulp(1.0);
 	public static final double ONE_PLUS_DOUBLE_EPS = Math.nextUp(1.0);
+	public static final double FLOAT_EPS = Math.ulp(1.0f);
+	public static final double ONE_PLUS_FLOAT_EPS = Math.nextUp(1.0f);
 
 	/**
 	 * Private constructor
