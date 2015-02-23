@@ -163,9 +163,11 @@ public class SectorScanConvert implements ExtendedPlugInFilter
 			for (int x=0; x<convertedWidth; x++) {
 				trueX = x + trueXMin;
 				radiusIndex = getRadiusIndex(trueX, trueY, rMin, rMax, convertedWidth);
-				angleIndex = getAngleIndex(trueX, trueY, convertedHeight, maxHalfAngleInRadians);
-				if ((radiusIndex < (double)convertedWidth) && (radiusIndex >= 0.0) && (angleIndex < (double)convertedHeight) && (angleIndex >= 0.0)) {
-					converted_pixels[ (y*convertedWidth) + x ] = (float)resized_ip.getInterpolatedValue(radiusIndex, angleIndex);
+				if ((radiusIndex < (double)convertedWidth) && (radiusIndex >= 0.0)) {
+					angleIndex = getAngleIndex(trueX, trueY, convertedHeight, maxHalfAngleInRadians);
+					if ((angleIndex < (double)convertedHeight) && (angleIndex >= 0.0)) {
+						converted_pixels[ (y*convertedWidth) + x ] = (float)resized_ip.getInterpolatedValue(radiusIndex, angleIndex);
+					}
 				}
 			}
 		}

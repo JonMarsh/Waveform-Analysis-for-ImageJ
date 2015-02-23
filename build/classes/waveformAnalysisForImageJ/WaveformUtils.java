@@ -25,7 +25,7 @@ import java.util.Arrays;
  * Static utility methods for waveform analysis in ImageJ plugins.
  *
  * @author Jon N. Marsh
- * @version 2014-10-22
+ * @version 2015-02-06
  */
 public class WaveformUtils
 {
@@ -47,7 +47,6 @@ public class WaveformUtils
 	 */
 	public static enum WindowType
 	{
-
 		BLACKMAN("Blackman", false, ""),
 		BLACKMAN_HARRIS("Blackman-Harris", false, ""),
 		BLACKMAN_NUTTALL("Blackman-Nuttall", false, ""),
@@ -669,10 +668,10 @@ public class WaveformUtils
 	 * thrown. Normalization is consistent with NI LabVIEW&reg FFT
 	 * implementation.
 	 *
-	 * @param	ar		      input array containing the real part of the waveform
-	 * @param	ai		      input array containing the imaginary part of the
+	 * @param ar        input array containing the real part of the waveform
+	 * @param ai        input array containing the imaginary part of the
 	 *                  waveform
-	 * @param	isForward	true for forward FFT, false for inverse FFT
+	 * @param isForward	true for forward FFT, false for inverse FFT
 	 */
 	public static final void fftComplexPowerOf2(double ar[], double ai[], boolean isForward)
 	{
@@ -756,6 +755,22 @@ public class WaveformUtils
 		}
 	}
 
+	/**
+	 * Computes complex FFT of real-valued input data (in place). Imaginary
+	 * input array values are ignored. The imaginary part of the transformed
+	 * input is stored in array {@code ai}, which must be the same as the real
+	 * input array {@code ar}. For efficiency, no null or length checking
+	 * is performed on real and imaginary input arrays. The length of the input
+	 * array range <b>must</b> be identical and equal to a power of 2, otherwise
+	 * a runtime exception may be thrown.Normalization is consistent with NI
+	 * LabVIEW&reg FFT implementation.
+	 *
+	 * @param ar input array containing the real-valued waveform, which is
+	 *           transformed in place and subsequently holds the real portion of
+	 *           the transform
+	 * @param ai array which will hold complex part of the transform (any input
+	 *           values are ignored)
+	 */
 	public static final void fftRealPowerOf2Forward(double ar[], double[] ai)
 	{
 		int nn = ar.length;
@@ -878,7 +893,7 @@ public class WaveformUtils
 		double[] aIm = new double[n];
 
 		// perform FFT
-		fftComplexPowerOf2(a, aIm, true);
+		fftRealPowerOf2Forward(a, aIm);
 
 		// zero out DC and Nyquist components
 		a[0] = aIm[0] = a[nOver2] = aIm[nOver2] = 0.0;
@@ -958,7 +973,7 @@ public class WaveformUtils
 	 * @param a              input array
 	 * @param waveformLength length of individual waveforms within input array
 	 * @param value          value used to pad input array
-	 * @return	array consisting of concatenated copies of input waveforms, each
+	 * @return array consisting of concatenated copies of input waveforms, each
 	 *         padded to the next highest power of 2 with {@code value} (unless
 	 *         {@code waveformLength} is itself a power of 2, in which case the
 	 *         returned array is just a copy of the input array)
@@ -1057,19 +1072,22 @@ public class WaveformUtils
 
 //--------------------reverseArray Methods---------------------------------//
 	/**
-	 * Reverses input array in place.
+	 * Reverses input array in place. No action is performed for {@code null} input.
 	 *
 	 * @param a input array
 	 */
 	public static final void reverseArrayInPlace(double[] a)
 	{
-		reverseArrayInPlace(a, 0, a.length);
+		if (a != null) {
+			reverseArrayInPlace(a, 0, a.length);
+		}
 	}
 
 	/**
 	 * Reverses elements of input array between indices {@code from} (inclusive)
 	 * and {@code to} (exclusive) in place. No error checking is performed on
-	 * range limits; if input parameters are invalid, runtime errors may occur.
+	 * range limits; if input parameters are invalid, runtime
+	 * errors may occur. No action is performed if the input array is {@code null}.
 	 *
 	 * @param a    input array
 	 * @param from initial index of the range in which to reverse elements,
@@ -1079,30 +1097,34 @@ public class WaveformUtils
 	 */
 	public static final void reverseArrayInPlace(double[] a, int from, int to)
 	{
-		int n = to - from;
-		int halfN = n / 2;
-		for (int i = 0; i < halfN; i++) {
-			double tmp = a[from + i];
-			a[from + i] = a[from + (n - 1 - i)];
-			a[from + (n - 1 - i)] = tmp;
+		if (a != null) {
+			int n = to - from;
+			int halfN = n / 2;
+			for (int i = 0; i < halfN; i++) {
+				double tmp = a[from + i];
+				a[from + i] = a[from + (n - 1 - i)];
+				a[from + (n - 1 - i)] = tmp;
+			}
 		}
-
 	}
 
 	/**
-	 * Reverses input array in place.
+	 * Reverses input array in place. No action is performed for {@code null} input.
 	 *
 	 * @param a input array
 	 */
 	public static final void reverseArrayInPlace(float[] a)
 	{
-		reverseArrayInPlace(a, 0, a.length);
+		if (a != null) {
+			reverseArrayInPlace(a, 0, a.length);
+		}
 	}
 
 	/**
 	 * Reverses elements of input array between indices {@code from} (inclusive)
 	 * and {@code to} (exclusive) in place. No error checking is performed on
 	 * range limits; if input parameters are invalid, runtime errors may occur.
+	 * No action is performed if the input array is {@code null}.
 	 *
 	 * @param a    input array
 	 * @param from initial index of the range in which to reverse elements,
@@ -1112,30 +1134,35 @@ public class WaveformUtils
 	 */
 	public static final void reverseArrayInPlace(float[] a, int from, int to)
 	{
-		int n = to - from;
-		int halfN = n / 2;
-		for (int i = 0; i < halfN; i++) {
-			float tmp = a[from + i];
-			a[from + i] = a[from + (n - 1 - i)];
-			a[from + (n - 1 - i)] = tmp;
+		if (a != null) {
+			int n = to - from;
+			int halfN = n / 2;
+			for (int i = 0; i < halfN; i++) {
+				float tmp = a[from + i];
+				a[from + i] = a[from + (n - 1 - i)];
+				a[from + (n - 1 - i)] = tmp;
+			}
 		}
 
 	}
 
 	/**
-	 * Reverses input array in place.
+	 * Reverses input array in place. No action is performed for {@code null} input.
 	 *
 	 * @param a input array
 	 */
 	public static final void reverseArrayInPlace(int[] a)
 	{
-		reverseArrayInPlace(a, 0, a.length);
+		if (a != null) {
+			reverseArrayInPlace(a, 0, a.length);
+		}
 	}
 
 	/**
 	 * Reverses elements of input array between indices {@code from} (inclusive)
 	 * and {@code to} (exclusive) in place. No error checking is performed on
-	 * range limits; if input parameters are invalid, runtime errors may occur.
+	 * range limits; if input parameters are invalid, runtime errors may occur. 
+	 * No action is performed if the input array is {@code null}.
 	 *
 	 * @param a    input array
 	 * @param from initial index of the range in which to reverse elements,
@@ -1145,12 +1172,14 @@ public class WaveformUtils
 	 */
 	public static final void reverseArrayInPlace(int[] a, int from, int to)
 	{
-		int n = to - from;
-		int halfN = n / 2;
-		for (int i = 0; i < halfN; i++) {
-			int tmp = a[from + i];
-			a[from + i] = a[from + (n - 1 - i)];
-			a[from + (n - 1 - i)] = tmp;
+		if (a != null) {
+			int n = to - from;
+			int halfN = n / 2;
+			for (int i = 0; i < halfN; i++) {
+				int tmp = a[from + i];
+				a[from + i] = a[from + (n - 1 - i)];
+				a[from + (n - 1 - i)] = tmp;
+			}
 		}
 
 	}
@@ -1168,7 +1197,9 @@ public class WaveformUtils
 	 */
 	public static final void rotateArrayInPlace(double[] a, int n)
 	{
-		rotateArrayInPlace(a, n, 0, a.length);
+		if (a != null) {
+			rotateArrayInPlace(a, n, 0, a.length);
+		}
 	}
 
 	/**
@@ -1222,7 +1253,9 @@ public class WaveformUtils
 	 */
 	public static final void rotateArrayInPlace(float[] a, int n)
 	{
-		rotateArrayInPlace(a, n, 0, a.length);
+		if (a != null) {
+			rotateArrayInPlace(a, n, 0, a.length);
+		}
 	}
 
 	/**

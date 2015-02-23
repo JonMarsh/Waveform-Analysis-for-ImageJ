@@ -709,6 +709,26 @@ public class WaveformUtilsTest
 		double[] expResult = new double[]{7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0};
 		WaveformUtils.reverseArrayInPlace(a);
 		assertArrayEquals(expResult, a, 0.0);
+		
+		a = new double[]{1.0, 2.0};
+		expResult = new double[]{2.0, 1.0};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0);
+		
+		a = new double[]{1.0};
+		expResult = new double[]{1.0};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0);
+		
+		a = new double[]{};
+		expResult = new double[]{};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0);
+		
+		a = null;
+		expResult = null;
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0);
 	}
 
 	/**
@@ -735,6 +755,26 @@ public class WaveformUtilsTest
 		System.out.println("reverseArrayInPlace");
 		float[] a = new float[]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f};
 		float[] expResult = new float[]{7.0f, 6.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0f);
+		
+		a = new float[]{1.0f, 2.0f};
+		expResult = new float[]{2.0f, 1.0f};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0f);
+		
+		a = new float[]{1.0f};
+		expResult = new float[]{1.0f};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0f);
+		
+		a = new float[]{};
+		expResult = new float[]{};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a, 0.0f);
+		
+		a = null;
+		expResult = null;
 		WaveformUtils.reverseArrayInPlace(a);
 		assertArrayEquals(expResult, a, 0.0f);
 	}
@@ -765,6 +805,26 @@ public class WaveformUtilsTest
 		int[] expResult = new int[]{7, 6, 5, 4, 3, 2, 1};
 		WaveformUtils.reverseArrayInPlace(a);
 		assertArrayEquals(a, expResult);
+		
+		a = new int[]{1, 2};
+		expResult = new int[]{2, 1};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a);
+		
+		a = new int[]{1};
+		expResult = new int[]{1};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a);
+		
+		a = new int[]{};
+		expResult = new int[]{};
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a);
+		
+		a = null;
+		expResult = null;
+		WaveformUtils.reverseArrayInPlace(a);
+		assertArrayEquals(expResult, a);
 	}
 
 	/**
@@ -806,6 +866,12 @@ public class WaveformUtilsTest
 		expResult = new double[]{4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0};
 		WaveformUtils.rotateArrayInPlace(a, n);
 		assertArrayEquals(a, expResult, 0.0);
+		
+		a = null;
+		n = 3;
+		expResult = null;
+		WaveformUtils.rotateArrayInPlace(a, n);
+		assertArrayEquals(a, expResult, 0.0);
 	}
 
 	/**
@@ -828,6 +894,14 @@ public class WaveformUtilsTest
 		from = 1;
 		to = 7;
 		expResult = new double[]{1.0, 4.0, 5.0, 6.0, 7.0, 2.0, 3.0, 8.0};
+		WaveformUtils.rotateArrayInPlace(a, n, from, to);
+		assertArrayEquals(a, expResult, 0.0);
+		
+		a = null;
+		n = 3;
+		from = 0;
+		to = 2;
+		expResult = null;
 		WaveformUtils.rotateArrayInPlace(a, n, from, to);
 		assertArrayEquals(a, expResult, 0.0);
 	}
@@ -856,6 +930,12 @@ public class WaveformUtilsTest
 		expResult = new float[]{4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 1.0f, 2.0f, 3.0f};
 		WaveformUtils.rotateArrayInPlace(a, n);
 		assertArrayEquals(a, expResult, 0.0f);
+		
+		a = null;
+		n = 3;
+		expResult = null;
+		WaveformUtils.rotateArrayInPlace(a, n);
+		assertArrayEquals(a, expResult, 0.0f);
 	}
 
 	/**
@@ -878,6 +958,14 @@ public class WaveformUtilsTest
 		from = 1;
 		to = 7;
 		expResult = new float[]{1.0f, 4.0f, 5.0f, 6.0f, 7.0f, 2.0f, 3.0f, 8.0f};
+		WaveformUtils.rotateArrayInPlace(a, n, from, to);
+		assertArrayEquals(a, expResult, 0.0f);
+		
+		a = null;
+		n = 3;
+		from = 0;
+		to = 2;
+		expResult = null;
 		WaveformUtils.rotateArrayInPlace(a, n, from, to);
 		assertArrayEquals(a, expResult, 0.0f);
 	}
