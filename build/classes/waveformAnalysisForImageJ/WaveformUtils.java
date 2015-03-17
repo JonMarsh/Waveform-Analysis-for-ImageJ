@@ -508,7 +508,11 @@ public class WaveformUtils
 	 */
 	public static final double median(double[] a)
 	{
-		return median(a, 0, a.length);
+		if (a != null) {
+			return median(a, 0, a.length);
+		} else {
+			return Double.NaN;
+		}
 	}
 
 	/**
@@ -584,12 +588,16 @@ public class WaveformUtils
 	 * returns {@code Double.NaN}.
 	 *
 	 * @param a	input array
-	 * @return	median value in the specified range of input array; if array is
+	 * @return median value in the specified range of input array; if array is
 	 *         zero length, method returns {@code NaN}
 	 */
 	public static final float median(float[] a)
 	{
-		return median(a, 0, a.length);
+		if (a != null) {
+			return median(a, 0, a.length);
+		} else {
+			return Float.NaN;
+		}
 	}
 
 	/**
@@ -601,10 +609,10 @@ public class WaveformUtils
 	 * The input array is left unchanged. {@code null} input returns
 	 * {@code Double.NaN}.
 	 *
-	 * @param a		  input array
-	 * @param from	initial index of the range to compute the median, inclusive
-	 * @param to		 final index of the range to compute the median, exclusive
-	 * @return	median value in the specified range of input array; if array
+	 * @param a    input array
+	 * @param from initial index of the range to compute the median, inclusive
+	 * @param to   final index of the range to compute the median, exclusive
+	 * @return median value in the specified range of input array; if array
 	 *         range is zero, method returns {@code NaN}
 	 */
 	public static final float median(float[] a, int from, int to)
@@ -2894,7 +2902,7 @@ public class WaveformUtils
 	 * <li>	{@code HANNING: w[i]=0.5*(1.0-cos(2*PI*i/n)), i=0,1,...,n-1} </li>
 	 * <li>
 	 * {@code KAISER: w[i]=besselI0(windowParam*sqrt(1-a*a))/besselI0(windowParam), a=(i-k)/k, k=0.5*n, i=0,1,...,n-1, besselI0(x)}
-	 * is the modified bessel function I<sub>0</sub>(x) </li>
+	 * is the modified Bessel function I<sub>0</sub>(x) </li>
 	 * <li>
 	 * {@code MODIFIED_BARTLETT_HANNING: w[i]=0.62-0.48*abs((i/n)-0.5)+0.38*cos(2*PI*((i/n)-0.5))};
 	 * </li>

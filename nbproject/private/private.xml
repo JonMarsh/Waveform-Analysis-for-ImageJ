@@ -5,6 +5,8 @@
         <group>
             <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/WaveformUtils.java</file>
             <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/test/waveformAnalysisForImageJTestPackage/WaveformUtilsTest.java</file>
+            <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/SectorScanConvert.java</file>
+            <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/ZeroCrossingLocations.java</file>
         </group>
     </open-files>
 </project-private>
