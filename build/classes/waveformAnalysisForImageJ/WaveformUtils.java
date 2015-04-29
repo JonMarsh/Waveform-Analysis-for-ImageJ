@@ -18,14 +18,15 @@ package waveformAnalysisForImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
-import java.math.BigDecimal;
 import java.util.Arrays;
+import java.math.BigDecimal;
+import java.math.MathContext;
 
 /**
  * Static utility methods for waveform analysis in ImageJ plugins.
  *
  * @author Jon N. Marsh
- * @version 2015-02-06
+ * @version 2015-04-07
  */
 public class WaveformUtils
 {
@@ -3431,8 +3432,12 @@ public class WaveformUtils
 	 * roots, the function returns a zero-length array. Note that the
 	 * discriminant {@code b*b-4*a*c} contains the potential for catastrophic
 	 * cancellation if its two terms are nearly equal, so in this case the
-	 * algorithm uses the {@link java.math#BigDecimal BigDecimal} class to
-	 * enhance computation precision.
+	 * algorithm uses {@code BigDecimal}s and methods described by W. Kahan in
+	 * "On the Cost of Floating-Point Computation Without Extra-Precise
+	 * Arithmetic"
+	 * (<a href="http://www.cs.berkeley.edu/~wkahan/Qdrtcs.pdf">www.cs.berkeley.edu/~wkahan/Qdrtcs.pdf/</a>),
+	 * which references TJ Dekker (“A Floating-Point Technique for Extending the
+	 * Available Precision,” pp 234-242 in Numerische Mathematik 18, 1971).
 	 *
 	 * @param a quadratic coefficient
 	 * @param b linear coefficient
@@ -3467,28 +3472,28 @@ public class WaveformUtils
 				}
 			}
 		} else {
-			double bb = b * b;
-			double fac = 4.0 * a * c;
-			if (bb < fac) { // discriminant < 0.0
-				return new double[0];
-			}
-			double x = bb - fac;
-			double fraction = bb/fac;
-			if (fraction <= ONE_PLUS_DOUBLE_EPS && fraction >= 1.0) { // discriminant close to zero
-				BigDecimal discriminant = new BigDecimal(b);
-				discriminant = discriminant.multiply(discriminant);
-				BigDecimal fourac = new BigDecimal(-4.0);
-				fourac = fourac.multiply(new BigDecimal(a));
-				fourac = fourac.multiply(new BigDecimal(c));
-				discriminant = discriminant.add(fourac);
-				x = discriminant.doubleValue();
-				if (x == 0.0) { // discriminant is truly zero to double precision
+			double p = b * b;
+			double q = 4.0 * a * c;
+			double d = p - q;
+			double sqrtD = Math.sqrt(d);
+			double pie = 3; // see reference cited in javadoc for the origin of this number
+			if (pie*Math.abs(d) < p+q) {
+				BigDecimal aBD = new BigDecimal(a, MathContext.DECIMAL64);
+				BigDecimal bBD = new BigDecimal(b, MathContext.DECIMAL64);
+				BigDecimal cBD = new BigDecimal(c, MathContext.DECIMAL64);
+				BigDecimal pBD = bBD.multiply(bBD);
+				BigDecimal qBD = aBD.multiply(cBD).multiply(new BigDecimal(4, MathContext.DECIMAL64));
+				BigDecimal dBD = pBD.subtract(qBD);
+				if (dBD.doubleValue() < 0) { // discriminant < 0.0
+					return new double[0];
+				} else if (dBD.doubleValue() == 0) { // discriminant is truly zero to double precision
 					return new double[]{-b / (2.0 * a)};
 				}
+				sqrtD = sqrt(dBD, MathContext.DECIMAL64).doubleValue();
 			}
-			double q = -0.5 * (b + Math.signum(b) * Math.sqrt(x));
-			double r1 = q / a;
-			double r2 = c / q;
+			double s = -0.5 * (b + Math.signum(b) * sqrtD);
+			double r1 = s / a;
+			double r2 = c / s;
 			if (r1 < r2) {
 				return new double[]{r1, r2};
 			} else if (r1 > r2) {
@@ -3497,6 +3502,38 @@ public class WaveformUtils
 				return new double[]{r1};
 			}
 		}
+	}
+
+	/**
+	 * Extra precise sqrt function for use with BigDecimal class. Uses Newton's
+	 * method to roughly double the number of significant digits of typical 
+	 * floating-point sqrt function. (This gem was found on StackOverflow.com)
+	 * 
+	 * @param value
+	 * @param mc
+	 * @return square root of {@code value}
+	 */
+	public static final BigDecimal sqrt(BigDecimal value, MathContext mc)
+	{
+    	BigDecimal x = new BigDecimal(Math.sqrt(value.doubleValue()), mc);
+    	return x.add(new BigDecimal(value.subtract(x.multiply(x)).doubleValue() / (x.doubleValue() * 2.0), mc));
+	}
+	
+	/**
+	 * Tricky algorithm attributed to GW Veltkamp by TJ Dekker (“A
+	 * Floating-Point Technique for Extending the Available Precision,” pp 234-
+	 * 242 in Numerische Mathematik 18, 1971) that breaks an operand into two
+	 * half-width fragments barely narrow enough that the product of any two
+	 * fragments is exact since it fits into 53 significant bits. Used for 
+	 * extended precision arithmetic.
+	 */
+	private static double[] break2(double x)
+	{
+		double bigX = x * 134217729; //... = x*(2^27 + 1)
+		double y = (x - bigX);
+		double xh = y + bigX;
+		double xt = x - xh;
+		return new double[]{xh, xt};
 	}
 
 	/**

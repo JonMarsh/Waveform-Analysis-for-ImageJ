@@ -4,9 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/WaveformUtils.java</file>
+            <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/AlignWaveforms.java</file>
             <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/test/waveformAnalysisForImageJTestPackage/WaveformUtilsTest.java</file>
-            <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/SectorScanConvert.java</file>
-            <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/ZeroCrossingLocations.java</file>
+            <file>file:/Users/jnm/NetBeansProjects/Waveform%20Analysis%20for%20ImageJ/src/waveformAnalysisForImageJ/plugins.config</file>
         </group>
     </open-files>
 </project-private>
