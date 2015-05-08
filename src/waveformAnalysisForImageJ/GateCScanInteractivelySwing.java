@@ -45,6 +45,10 @@ public class GateCScanInteractivelySwing implements PlugIn
 	static final int MEAN = 2;
 	static final String[] filters = {"Median", "Gaussian", "Mean"};
 	static int filterSelection = MEDIAN;
+	static final int PEAK_DETECT = 0;
+	static final int THRESHOLD_DETECT = 1;
+	static final String[] detectionMethods = {"Peak", "Threshold"};
+	static int detectionMethodSelection = PEAK_DETECT;
 	static double smoothingRadius = 1.0;
 	static boolean outputGatePositions = true;
 	static boolean outputGateROIs = true;
@@ -143,6 +147,10 @@ public class GateCScanInteractivelySwing implements PlugIn
 				panel.filterComboBox.addItem(filter);
 			}
 			panel.filterComboBox.setSelectedIndex(filterSelection);
+			for (String detectionMethod : detectionMethods) {
+				panel.detectionMethodComboBox.addItem(detectionMethod);
+			}
+			panel.detectionMethodComboBox.setSelectedIndex(detectionMethodSelection);
 			panel.smoothingRadiusTextField.setText(IJ.d2s(smoothingRadius, 3));
 			panel.outputGatePositionsCheckbox.setSelected(outputGatePositions);
 			panel.outputGateROIsCheckbox.setSelected(outputGateROIs);
@@ -184,7 +192,8 @@ public class GateCScanInteractivelySwing implements PlugIn
 				
 				if (source == panel.createGatesButton) {
 					panel.createGatesButton.setText("Working...");
-					short[] gatePositions = computeGateStartPositionsForStack(stack, autoStartSearchPoint, offsetPoint, threshold);
+					detectionMethodSelection = panel.detectionMethodComboBox.getSelectedIndex();
+					short[] gatePositions = computeGateStartPositionsForStack(stack, autoStartSearchPoint, offsetPoint, threshold, detectionMethodSelection);
 					gateProcessor.setPixels(gatePositions);
 					gatesExist = true;
 					IJ.resetMinAndMax();
@@ -436,7 +445,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 	}
 	
 	/* Computes gate start positions for entire stack */
-	private short[] computeGateStartPositionsForStack(ImageStack stack, int searchStartPoint, int offsetPoint, float threshold)
+	private short[] computeGateStartPositionsForStack(ImageStack stack, int searchStartPoint, int offsetPoint, float threshold, int detectionType)
 	{
 		int nPoints = stack.getWidth();
 		int nRecords = stack.getHeight();
@@ -448,7 +457,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 		if (threshold < globalMinAndMax[1]) {
 			for (int slice = 1; slice <= stackSize; slice++) {
 				pixelValues = (float[]) stack.getProcessor(slice).convertToFloat().getPixels();
-				short[] sliceGates = computeGateStartPositions(pixelValues, nPoints, nRecords, searchStartPoint, offsetPoint, threshold);
+				short[] sliceGates = computeGateStartPositions(pixelValues, nPoints, nRecords, searchStartPoint, offsetPoint, threshold, detectionType);
 				System.arraycopy(sliceGates, 0, gateStartPositions, (slice - 1) * nRecords, nRecords);
 			}
 
@@ -460,21 +469,38 @@ public class GateCScanInteractivelySwing implements PlugIn
 	}
 
 	/* Computes gate start positions for individual slice, assumed to be represented by data in 'pixels' */
-	private short[] computeGateStartPositions(float[] pixels, int recordLength, int numberOfRecords, int searchStartPoint, int offsetPoint, float threshold)
+	private short[] computeGateStartPositions(float[] pixels, int recordLength, int numberOfRecords, int searchStartPoint, int offsetPoint, float threshold, int detectionType)
 	{
 		float[] tempArray = new float[recordLength];
 		short[] gateStartPositions = new short[numberOfRecords];
 
 		for (int i = 0; i < numberOfRecords; i++) {
+			int gateStart = (short) (-1);
 			if (searchBackwards) {
 				for (int j = 0, k = ((i + 1) * recordLength) - 1 - searchStartPoint; k >= i * recordLength; j++, k--) {
 					tempArray[j] = pixels[k];
 				}
-				int gateStart = peakDetect(tempArray, threshold);
+				switch (detectionType) {
+					case PEAK_DETECT: 
+						gateStart = peakDetect(tempArray, threshold);
+						break;
+					case THRESHOLD_DETECT:
+						gateStart = thresholdDetect(tempArray, threshold);
+						break;
+					default:
+				}
 				gateStartPositions[i] = (gateStart >= 0) ? (short)(recordLength - (gateStart + offsetPoint + searchStartPoint) - 1) : (short) (-1);
 			} else {
 				System.arraycopy(pixels, (i * recordLength) + searchStartPoint, tempArray, 0, recordLength - searchStartPoint);
-				int gateStart = peakDetect(tempArray, threshold);
+				switch (detectionType) {
+					case PEAK_DETECT: 
+						gateStart = peakDetect(tempArray, threshold);
+						break;
+					case THRESHOLD_DETECT:
+						gateStart = thresholdDetect(tempArray, threshold);
+						break;
+					default:
+				}
 				gateStartPositions[i] = (gateStart >= 0) ? (short)(gateStart + offsetPoint + searchStartPoint) : (short) (-1);
 			}
 
@@ -516,6 +542,20 @@ public class GateCScanInteractivelySwing implements PlugIn
 			}
 		}
 
+		return (i >= a.length - 2) ? -1 : i;
+	}
+	
+	/* Returns the index of the first value found which exceeds the specified threshold. Returns -1 if no peaks above threshold are detected */
+	private int thresholdDetect(float[] a, float threshold)
+	{
+		int i;
+		
+		for (i=1; i<a.length-1; i++) {
+			if (a[i] > threshold) {
+				break;
+			}
+		}
+		
 		return (i >= a.length - 2) ? -1 : i;
 	}
 	

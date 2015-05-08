@@ -1,6 +1,5 @@
 package waveformAnalysisForImageJ;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -17,7 +16,7 @@ import javax.swing.LayoutStyle;
 /**
  *
  * @author Jon N. Marsh
- * @version 2014-09-25
+ * @version 2015-05-07
  */
 
 
@@ -66,6 +65,8 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
         outputGateROIsCheckbox = new JCheckBox();
         cancelButton = new JButton();
         okButton = new JButton();
+        detectionMethodComboBox = new JComboBox();
+        jLabel8 = new JLabel();
 
         setBorder(BorderFactory.createEtchedBorder());
 
@@ -112,9 +113,9 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
             }
         });
 
-        smoothGatesButton.setText("Smooth gates");
+        smoothGatesButton.setText("Smooth");
 
-        createGatesButton.setText("Create gates");
+        createGatesButton.setText("Detect");
 
         jLabel5.setText("Smoothing filter");
 
@@ -193,48 +194,56 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
 
         okButton.setText("OK");
 
+        detectionMethodComboBox.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent evt)
+            {
+                detectionMethodComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Detection method");
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2, GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, GroupLayout.Alignment.TRAILING)
+                            .addComponent(createGatesButton, GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5, GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel6, GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel7, GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3, GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8, GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(gateApplicationComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(gateLengthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(offsetTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchStartPointTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(smoothGatesButton)
+                            .addComponent(filterComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(smoothingRadiusTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(thresholdTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(detectionMethodComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchBackwardsCheckbox)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel1)
-                                    .addComponent(createGatesButton)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel7))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(gateApplicationComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(searchBackwardsCheckbox)
-                                    .addComponent(gateLengthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(thresholdTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(offsetTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(searchStartPointTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(smoothGatesButton)
-                                    .addComponent(filterComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(smoothingRadiusTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(cancelButton)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(okButton)
-                                .addContainerGap())))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addComponent(cancelButton)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(okButton)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(searchStartPointTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -244,18 +253,22 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
                     .addComponent(jLabel2))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(gateLengthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(thresholdTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(gateLengthTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(detectionMethodComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchBackwardsCheckbox)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(createGatesButton)
-                    .addComponent(smoothGatesButton))
+                    .addComponent(smoothGatesButton)
+                    .addComponent(createGatesButton))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(filterComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -272,9 +285,8 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(okButton)
+                    .addComponent(cancelButton)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -313,10 +325,16 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
         // TODO add your handling code here:
     }//GEN-LAST:event_smoothingRadiusTextFieldActionPerformed
 
+    private void detectionMethodComboBoxActionPerformed(ActionEvent evt)//GEN-FIRST:event_detectionMethodComboBoxActionPerformed
+    {//GEN-HEADEREND:event_detectionMethodComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_detectionMethodComboBoxActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public JButton cancelButton;
     public JButton createGatesButton;
+    public JComboBox detectionMethodComboBox;
     public JComboBox filterComboBox;
     public JComboBox gateApplicationComboBox;
     public JTextField gateLengthTextField;
@@ -327,6 +345,7 @@ public class GateCScanInteractivelySwingControlPanel extends javax.swing.JPanel
     private JLabel jLabel5;
     private JLabel jLabel6;
     private JLabel jLabel7;
+    private JLabel jLabel8;
     private JPanel jPanel1;
     public JTextField offsetTextField;
     public JButton okButton;
