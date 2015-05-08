@@ -768,8 +768,8 @@ public class WaveformUtils
 	 * Computes complex FFT of real-valued input data (in place). Imaginary
 	 * input array values are ignored. The imaginary part of the transformed
 	 * input is stored in array {@code ai}, which must be the same as the real
-	 * input array {@code ar}. For efficiency, no null or length checking
-	 * is performed on real and imaginary input arrays. The length of the input
+	 * input array {@code ar}. For efficiency, no null or length checking is
+	 * performed on real and imaginary input arrays. The length of the input
 	 * array range <b>must</b> be identical and equal to a power of 2, otherwise
 	 * a runtime exception may be thrown.Normalization is consistent with NI
 	 * LabVIEW&reg FFT implementation.
@@ -784,29 +784,29 @@ public class WaveformUtils
 	{
 		int nn = ar.length;
 		int n = nn / 2;
-		double delta = Math.PI/n;
-		double sinHalfDelta = Math.sin(0.5*delta);
-		double alpha = 2*sinHalfDelta*sinHalfDelta;
+		double delta = Math.PI / n;
+		double sinHalfDelta = Math.sin(0.5 * delta);
+		double alpha = 2 * sinHalfDelta * sinHalfDelta;
 		double beta = Math.sin(delta);
-		
+
 		// initialize real and imaginary arrays with odd and even element indices of input real array
 		for (int i = 0; i < n; i++) {
-			ai[i] = ar[2*i+1];
-			ar[i] = ar[2*i];
+			ai[i] = ar[2 * i + 1];
+			ar[i] = ar[2 * i];
 		}
-		
+
 		// perform forward FFT using first half of real and imaginary parts
 		fftComplexPowerOf2(ar, ai, 0, n, true);
-		
+
 		// set up trig recursions
 		double cosNDelta = 1 - alpha;
 		double sinNDelta = beta;
 		double cosNPlusOneDelta, sinNPlusOneDelta;
-		
+
 		// store intermediate results in second (redundant) half of input arrays
 		for (int i = 1; i < n; i++) {
-			ar[i+n] = 0.5 * (ar[i] + ar[n - i] + cosNDelta * (ai[i] + ai[n - i]) - sinNDelta * (ar[i] - ar[n - i]));
-			ai[i+n] = 0.5 * (ai[i] - ai[n - i] - sinNDelta * (ai[i] + ai[n - i]) - cosNDelta * (ar[i] - ar[n - i]));
+			ar[i + n] = 0.5 * (ar[i] + ar[n - i] + cosNDelta * (ai[i] + ai[n - i]) - sinNDelta * (ar[i] - ar[n - i]));
+			ai[i + n] = 0.5 * (ai[i] - ai[n - i] - sinNDelta * (ai[i] + ai[n - i]) - cosNDelta * (ar[i] - ar[n - i]));
 			cosNPlusOneDelta = cosNDelta - (alpha * cosNDelta + beta * sinNDelta);
 			sinNPlusOneDelta = sinNDelta - (alpha * sinNDelta - beta * cosNDelta);
 			cosNDelta = cosNPlusOneDelta;
@@ -818,39 +818,39 @@ public class WaveformUtils
 		double arn = ar[0] - ai[0];
 		ar[0] = ar0;
 		ai[0] = 0.0;
-		for (int i=1; i<n; i++) {
-			ar[i] = ar[i+n];
-			ai[i] = ai[i+n];
+		for (int i = 1; i < n; i++) {
+			ar[i] = ar[i + n];
+			ai[i] = ai[i + n];
 		}
 		ar[n] = arn;
 		ai[n] = 0.0;
-		
+
 		// overwrite intermediate results with symmetric/antisymmetric copies
-		for (int i=1; i<n; i++) {
-			ar[2*n-i] = ar[i];
-			ai[2*n-i] = -ai[i];
+		for (int i = 1; i < n; i++) {
+			ar[2 * n - i] = ar[i];
+			ai[2 * n - i] = -ai[i];
 		}
-		
+
 	}
-	
+
 	public static final void fftRealPowerOf2Inverse(double ar[], double[] ai)
 	{
 		int nn = ar.length;
 		int n = nn / 2;
-		double delta = -Math.PI/n;
-		double sinHalfDelta = Math.sin(0.5*delta);
-		double alpha = 2*sinHalfDelta*sinHalfDelta;
+		double delta = -Math.PI / n;
+		double sinHalfDelta = Math.sin(0.5 * delta);
+		double alpha = 2 * sinHalfDelta * sinHalfDelta;
 		double beta = Math.sin(delta);
 
 		// set up trig recursions
 		double cosNDelta = 1 - alpha;
 		double sinNDelta = beta;
 		double cosNPlusOneDelta, sinNPlusOneDelta;
-		
+
 		// store intermediate results in second (redundant) half of input arrays
 		for (int i = 1; i < n; i++) {
-			ar[i+n] = 0.5 * (ar[i] + ar[n - i] + cosNDelta * (ai[i] + ai[n - i]) - sinNDelta * (ar[i] - ar[n - i]));
-			ai[i+n] = 0.5 * (ai[i] - ai[n - i] - sinNDelta * (ai[i] + ai[n - i]) - cosNDelta * (ar[i] - ar[n - i]));
+			ar[i + n] = 0.5 * (ar[i] + ar[n - i] + cosNDelta * (ai[i] + ai[n - i]) - sinNDelta * (ar[i] - ar[n - i]));
+			ai[i + n] = 0.5 * (ai[i] - ai[n - i] - sinNDelta * (ai[i] + ai[n - i]) - cosNDelta * (ar[i] - ar[n - i]));
 			cosNPlusOneDelta = cosNDelta - (alpha * cosNDelta + beta * sinNDelta);
 			sinNPlusOneDelta = sinNDelta - (alpha * sinNDelta - beta * cosNDelta);
 			cosNDelta = cosNPlusOneDelta;
@@ -859,23 +859,23 @@ public class WaveformUtils
 
 		// perform inverse FFT using second half of real and imaginary parts
 		fftComplexPowerOf2(ar, ai, n, nn, false);
-		
+
 		// reorder results
 		double ar0 = ar[n] + ai[n];
 		double arn = ar[n] - ai[n];
 		ar[0] = ar0;
 		ai[0] = 0.0;
-		for (int i=1; i<n; i++) {
-			ar[i] = ar[i+n];
-			ai[i] = ai[i+n];
+		for (int i = 1; i < n; i++) {
+			ar[i] = ar[i + n];
+			ai[i] = ai[i + n];
 		}
 		ar[n] = arn;
 		ai[n] = 0.0;
-		
+
 		// overwrite intermediate results with symmetric/antisymmetric copies
-		for (int i=1; i<n; i++) {
-			ar[2*n-i] = ar[i];
-			ai[2*n-i] = -ai[i];
+		for (int i = 1; i < n; i++) {
+			ar[2 * n - i] = ar[i];
+			ai[2 * n - i] = -ai[i];
 		}
 
 	}
@@ -1081,7 +1081,8 @@ public class WaveformUtils
 
 //--------------------reverseArray Methods---------------------------------//
 	/**
-	 * Reverses input array in place. No action is performed for {@code null} input.
+	 * Reverses input array in place. No action is performed for {@code null}
+	 * input.
 	 *
 	 * @param a input array
 	 */
@@ -1095,8 +1096,8 @@ public class WaveformUtils
 	/**
 	 * Reverses elements of input array between indices {@code from} (inclusive)
 	 * and {@code to} (exclusive) in place. No error checking is performed on
-	 * range limits; if input parameters are invalid, runtime
-	 * errors may occur. No action is performed if the input array is {@code null}.
+	 * range limits; if input parameters are invalid, runtime errors may occur.
+	 * No action is performed if the input array is {@code null}.
 	 *
 	 * @param a    input array
 	 * @param from initial index of the range in which to reverse elements,
@@ -1118,7 +1119,8 @@ public class WaveformUtils
 	}
 
 	/**
-	 * Reverses input array in place. No action is performed for {@code null} input.
+	 * Reverses input array in place. No action is performed for {@code null}
+	 * input.
 	 *
 	 * @param a input array
 	 */
@@ -1156,7 +1158,8 @@ public class WaveformUtils
 	}
 
 	/**
-	 * Reverses input array in place. No action is performed for {@code null} input.
+	 * Reverses input array in place. No action is performed for {@code null}
+	 * input.
 	 *
 	 * @param a input array
 	 */
@@ -1170,7 +1173,7 @@ public class WaveformUtils
 	/**
 	 * Reverses elements of input array between indices {@code from} (inclusive)
 	 * and {@code to} (exclusive) in place. No error checking is performed on
-	 * range limits; if input parameters are invalid, runtime errors may occur. 
+	 * range limits; if input parameters are invalid, runtime errors may occur.
 	 * No action is performed if the input array is {@code null}.
 	 *
 	 * @param a    input array
@@ -1538,8 +1541,9 @@ public class WaveformUtils
 	 * @param y waveform values evaluated at points given in {@code x[]}
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third polynomial coefficients
-	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 *         elements are (in order) the first, second, and third polynomial
+	 *         coefficients of {@code y[]} evaluated at the points in
+	 *         {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolant(double[] x, double[] y)
 	{
@@ -1598,8 +1602,9 @@ public class WaveformUtils
 	 * @param y waveform values evaluated at points given in {@code x[]}
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third polynomial coefficients
-	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 *         elements are (in order) the first, second, and third polynomial
+	 *         coefficients of {@code y[]} evaluated at the points in
+	 *         {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolant(float[] x, float[] y)
 	{
@@ -1659,8 +1664,9 @@ public class WaveformUtils
 	 * @param dx interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third polynomial coefficients
-	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 *         elements are (in order) the first, second, and third polynomial
+	 *         coefficients of {@code y[]} evaluated at the points in
+	 *         {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(double[] y, double dx)
 	{
@@ -1691,8 +1697,9 @@ public class WaveformUtils
 	 * @param dx   interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third polynomial coefficients
-	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 *         elements are (in order) the first, second, and third polynomial
+	 *         coefficients of {@code y[]} evaluated at the points in
+	 *         {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(double[] y, int from, int to, double dx)
 	{
@@ -1744,8 +1751,9 @@ public class WaveformUtils
 	 * @param dx interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third polynomial coefficients
-	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 *         elements are (in order) the first, second, and third polynomial
+	 *         coefficients of {@code y[]} evaluated at the points in
+	 *         {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(float[] y, double dx)
 	{
@@ -1776,8 +1784,9 @@ public class WaveformUtils
 	 * @param dx   interelement spacing
 	 * @return a two-dimensional array of size {@code [4][y.length]}, where the
 	 *         first element is a copy of {@code y[]}, and the remaining
-	 *         elements are (in order) the first, second, and third polynomial coefficients
-	 *         of {@code y[]} evaluated at the points in {@code x[]}.
+	 *         elements are (in order) the first, second, and third polynomial
+	 *         coefficients of {@code y[]} evaluated at the points in
+	 *         {@code x[]}.
 	 */
 	public static final double[][] cubicSplineInterpolantUniformSpacing(float[] y, int from, int to, double dx)
 	{
@@ -1841,8 +1850,8 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third polynomial coefficients of {@code y[]} evaluated at the points in
-	 *         {@code x[]}
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the
+	 *         points in {@code x[]}
 	 */
 	public static final double[][] smoothingSplineInterpolant(double[] x, double[] y, double standardDeviation, double smoothingParameter)
 	{
@@ -2014,8 +2023,8 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third polynomial coefficients of {@code y[]} evaluated at the points in
-	 *         {@code x[]}
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the
+	 *         points in {@code x[]}
 	 */
 	public static final double[][] smoothingSplineInterpolant(float[] x, float[] y, double standardDeviation, double smoothingParameter)
 	{
@@ -2187,8 +2196,8 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third polynomial coefficients of {@code y[]} evaluated at the indices
-	 *         between {@code 0} and {@code y.length}
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the
+	 *         indices between {@code 0} and {@code y.length}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(double[] y,
 			double standardDeviation,
@@ -2371,8 +2380,8 @@ public class WaveformUtils
 	 * @return a two-dimensional array of dimension {@code [4][y.length]}, where
 	 *         the first element is an array of smoothed values of {@code y[]},
 	 *         and whose remaining elements are (in order) the first, second,
-	 *         and third polynomial coefficients of {@code y[]} evaluated at the indices
-	 *         between {@code 0} and {@code y.length}
+	 *         and third polynomial coefficients of {@code y[]} evaluated at the
+	 *         indices between {@code 0} and {@code y.length}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(float[] y,
 			double standardDeviation,
@@ -2418,9 +2427,9 @@ public class WaveformUtils
 	 * @return	a two-dimensional array of dimension {@code [4][to-from]}, where
 	 *         the first element is an array of smoothed values of {@code y[]}
 	 *         between {@code from} and {@code to}, and whose remaining elements
-	 *         are (in order) the first, second, and third polynomial coefficients of
-	 *         {@code y[]} evaluated at the indices between {@code from} and
-	 *         {@code to}
+	 *         are (in order) the first, second, and third polynomial
+	 *         coefficients of {@code y[]} evaluated at the indices between
+	 *         {@code from} and {@code to}
 	 */
 	public static final double[][] smoothingSplineInterpolantUniformSpacing(float[] y,
 			int from,
@@ -3477,7 +3486,7 @@ public class WaveformUtils
 			double d = p - q;
 			double sqrtD = Math.sqrt(d);
 			double pie = 3; // see reference cited in javadoc for the origin of this number
-			if (pie*Math.abs(d) < p+q) {
+			if (pie * Math.abs(d) < p + q) {
 				BigDecimal aBD = new BigDecimal(a, MathContext.DECIMAL64);
 				BigDecimal bBD = new BigDecimal(b, MathContext.DECIMAL64);
 				BigDecimal cBD = new BigDecimal(c, MathContext.DECIMAL64);
@@ -3506,25 +3515,25 @@ public class WaveformUtils
 
 	/**
 	 * Extra precise sqrt function for use with BigDecimal class. Uses Newton's
-	 * method to roughly double the number of significant digits of typical 
+	 * method to roughly double the number of significant digits of typical
 	 * floating-point sqrt function. (This gem was found on StackOverflow.com)
-	 * 
+	 *
 	 * @param value
 	 * @param mc
 	 * @return square root of {@code value}
 	 */
 	public static final BigDecimal sqrt(BigDecimal value, MathContext mc)
 	{
-    	BigDecimal x = new BigDecimal(Math.sqrt(value.doubleValue()), mc);
-    	return x.add(new BigDecimal(value.subtract(x.multiply(x)).doubleValue() / (x.doubleValue() * 2.0), mc));
+		BigDecimal x = new BigDecimal(Math.sqrt(value.doubleValue()), mc);
+		return x.add(new BigDecimal(value.subtract(x.multiply(x)).doubleValue() / (x.doubleValue() * 2.0), mc));
 	}
-	
+
 	/**
 	 * Tricky algorithm attributed to GW Veltkamp by TJ Dekker (“A
 	 * Floating-Point Technique for Extending the Available Precision,” pp 234-
 	 * 242 in Numerische Mathematik 18, 1971) that breaks an operand into two
 	 * half-width fragments barely narrow enough that the product of any two
-	 * fragments is exact since it fits into 53 significant bits. Used for 
+	 * fragments is exact since it fits into 53 significant bits. Used for
 	 * extended precision arithmetic.
 	 */
 	private static double[] break2(double x)
@@ -3544,7 +3553,8 @@ public class WaveformUtils
 	 * root, the results are returned in a two-element array. If there is a
 	 * single real root, the result is returned in a single-element array.
 	 * <p>
-	 * Code adapted from GSL poly/solve_cubic.c (<a href="http://www.gnu.org/software/gsl/">www.gnu.org/software/gsl/</a>)
+	 * Code adapted from GSL poly/solve_cubic.c
+	 * (<a href="http://www.gnu.org/software/gsl/">www.gnu.org/software/gsl/</a>)
 	 * </p>
 	 *
 	 * @param a quadratic coefficient
