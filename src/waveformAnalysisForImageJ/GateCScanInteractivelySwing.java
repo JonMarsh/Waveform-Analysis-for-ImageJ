@@ -7,6 +7,8 @@ import ij.ImageStack;
 import ij.WindowManager;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
+import ij.gui.Line;
+import ij.gui.Overlay;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.plugin.PlugIn;
@@ -191,15 +193,14 @@ public class GateCScanInteractivelySwing implements PlugIn
 				searchBackwards = panel.searchBackwardsCheckbox.isSelected();
 				
 				if (source == panel.createGatesButton) {
-					panel.createGatesButton.setText("Working...");
 					detectionMethodSelection = panel.detectionMethodComboBox.getSelectedIndex();
 					short[] gatePositions = computeGateStartPositionsForStack(stack, autoStartSearchPoint, offsetPoint, threshold, detectionMethodSelection);
 					gateProcessor.setPixels(gatePositions);
+					gateImage.setOverlay(new Overlay(new Line(0, currentSlice - 1, recordsPerFrame, currentSlice - 1)));
 					gatesExist = true;
 					IJ.resetMinAndMax();
 					short[] gatePositionsForDisplayedSlice = Arrays.copyOfRange(gatePositions, (currentSlice - 1) * recordsPerFrame, currentSlice * recordsPerFrame);
 					drawSingleROI(WindowManager.getImage(inputImageID), gatePositionsForDisplayedSlice, gateLength, searchBackwards);
-					panel.createGatesButton.setText("Create gates");
 				}
 				
 				if (source == panel.smoothGatesButton) {
@@ -323,6 +324,7 @@ public class GateCScanInteractivelySwing implements PlugIn
 				if (image.getSlice() != currentSlice) {
 					currentSlice = image.getSlice();
 					if (gatesExist) {
+						gateImage.setOverlay(new Overlay(new Line(0, currentSlice - 1, recordsPerFrame, currentSlice - 1)));
 						short[] gatePositions = (short[])gateProcessor.getPixels();
 						short[] gatePositionsForDisplayedSlice = Arrays.copyOfRange(gatePositions, (currentSlice - 1) * recordsPerFrame, currentSlice * recordsPerFrame);
 						drawSingleROI(image, gatePositionsForDisplayedSlice, gateLength, searchBackwards);
