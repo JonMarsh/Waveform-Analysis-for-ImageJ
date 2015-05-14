@@ -345,6 +345,11 @@ public class WaveformUtilsTest
 		expResult = 2.5;
 		result = WaveformUtils.median(a);
 		assertEquals(expResult, result, Math.ulp(expResult));
+		
+		a = null;
+		expResult = Double.NaN;
+		result = WaveformUtils.median(a);
+		assertEquals(expResult, result, Math.ulp(expResult));
 	}
 
 	/**
@@ -365,6 +370,13 @@ public class WaveformUtilsTest
 		from = 4;
 		to = 8;
 		expResult = 3.3;
+		result = WaveformUtils.median(a, from, to);
+		assertEquals(expResult, result, Math.ulp(expResult));
+		
+		a = null;
+		from = 4;
+		to = 8;
+		expResult = Double.NaN;
 		result = WaveformUtils.median(a, from, to);
 		assertEquals(expResult, result, Math.ulp(expResult));
 	}
@@ -391,6 +403,13 @@ public class WaveformUtilsTest
 		result = WaveformUtils.medianAndSort(a);
 		assertEquals(expResult, result, Math.ulp(expResult));
 		assertArrayEquals(a, aSorted, 0.0);
+		
+		a = null;
+		aSorted = null;
+		expResult = Double.NaN;
+		result = WaveformUtils.medianAndSort(a);
+		assertEquals(expResult, result, Math.ulp(expResult));
+		assertArrayEquals(a, aSorted, 0.0);
 	}
 
 	/**
@@ -407,6 +426,11 @@ public class WaveformUtilsTest
 
 		a = new float[]{1.0f, 5.0f, 3.0f, 2.0f};
 		expResult = 2.5f;
+		result = WaveformUtils.median(a);
+		assertEquals(expResult, result, Math.ulp(expResult));
+		
+		a = null;
+		expResult = Float.NaN;
 		result = WaveformUtils.median(a);
 		assertEquals(expResult, result, Math.ulp(expResult));
 	}
@@ -431,6 +455,13 @@ public class WaveformUtilsTest
 		expResult = 3.3f;
 		result = WaveformUtils.median(a, from, to);
 		assertEquals(expResult, result, Math.ulp(expResult));
+		
+		a = null;
+		from = 4;
+		to = 8;
+		expResult = Float.NaN;
+		result = WaveformUtils.median(a, from, to);
+		assertEquals(expResult, result, Math.ulp(expResult));
 	}
 
 	/**
@@ -452,6 +483,13 @@ public class WaveformUtilsTest
 		aSorted = Arrays.copyOf(a, a.length);
 		Arrays.sort(aSorted);
 		expResult = 2.5f;
+		result = WaveformUtils.medianAndSort(a);
+		assertEquals(expResult, result, Math.ulp(expResult));
+		assertArrayEquals(a, aSorted, 0.0f);
+		
+		a = null;
+		aSorted = null;
+		expResult = Float.NaN;
 		result = WaveformUtils.medianAndSort(a);
 		assertEquals(expResult, result, Math.ulp(expResult));
 		assertArrayEquals(a, aSorted, 0.0f);

@@ -1,17 +1,21 @@
 /*
  * Copyright 2014 Jon N. Marsh.
+
+ * Because small portions of this software are derived from Apache Commons Math
+ * and GNU Scientific Library routines, it is licensed under GPLv3, which is
+ * compatible with Apache Software License 2.0:
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 package waveformAnalysisForImageJ;
 
@@ -48,6 +52,7 @@ public class WaveformUtils
 	 */
 	public static enum WindowType
 	{
+
 		BLACKMAN("Blackman", false, ""),
 		BLACKMAN_HARRIS("Blackman-Harris", false, ""),
 		BLACKMAN_NUTTALL("Blackman-Nuttall", false, ""),
@@ -532,19 +537,23 @@ public class WaveformUtils
 	 */
 	public static final double median(double[] a, int from, int to)
 	{
-		int n = to - from;
-		if (n > 1) {
-			int halfN = n / 2;
-			final double[] temp = new double[n];
-			System.arraycopy(a, from, temp, 0, n);
-			Arrays.sort(temp);
-			if (n % 2 == 0) {
-				return (0.5 * (temp[halfN] + temp[halfN - 1]));
+		if (a != null) {
+			int n = to - from;
+			if (n > 1) {
+				int halfN = n / 2;
+				final double[] temp = new double[n];
+				System.arraycopy(a, from, temp, 0, n);
+				Arrays.sort(temp);
+				if (n % 2 == 0) {
+					return (0.5 * (temp[halfN] + temp[halfN - 1]));
+				} else {
+					return temp[halfN];
+				}
+			} else if (n == 1) {
+				return a[from];
 			} else {
-				return temp[halfN];
+				return Double.NaN;
 			}
-		} else if (n == 1) {
-			return a[from];
 		} else {
 			return Double.NaN;
 		}
@@ -618,19 +627,23 @@ public class WaveformUtils
 	 */
 	public static final float median(float[] a, int from, int to)
 	{
-		int n = to - from;
-		if (n > 1) {
-			int halfN = n / 2;
-			final float[] temp = new float[n];
-			System.arraycopy(a, from, temp, 0, n);
-			Arrays.sort(temp);
-			if (n % 2 == 0) {
-				return (0.5f * (temp[halfN] + temp[halfN - 1]));
+		if (a != null) {
+			int n = to - from;
+			if (n > 1) {
+				int halfN = n / 2;
+				final float[] temp = new float[n];
+				System.arraycopy(a, from, temp, 0, n);
+				Arrays.sort(temp);
+				if (n % 2 == 0) {
+					return (0.5f * (temp[halfN] + temp[halfN - 1]));
+				} else {
+					return temp[halfN];
+				}
+			} else if (n == 1) {
+				return a[from];
 			} else {
-				return temp[halfN];
+				return Float.NaN;
 			}
-		} else if (n == 1) {
-			return a[from];
 		} else {
 			return Float.NaN;
 		}
@@ -2844,10 +2857,11 @@ public class WaveformUtils
 	 * {@code ImagePlus} object. The min and max values are computed over all
 	 * slices of an image. If {@code image} is null, the return value is null.
 	 *
-	 * @param image
+	 * @param image input {@code ImagePlus} object
 	 * @return two-element {@code double} array whose first value is the global
 	 *         minimum pixel value and whose second value is the global maximum
-	 *         pixel value of {@code image}
+	 *         pixel value of {@code image}. Null value is returned for null
+	 *         input.
 	 */
 	public static final double[] getGlobalMinAndMax(ImagePlus image)
 	{
@@ -3382,7 +3396,7 @@ public class WaveformUtils
 	 */
 	public static final double log2(double x)
 	{
-		return (3.321928094887362 * Math.log10(x));
+		return (1.4426950408889634074 * Math.log(x));
 	}
 
 	/**
