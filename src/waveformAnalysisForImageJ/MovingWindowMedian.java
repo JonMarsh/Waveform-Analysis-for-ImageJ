@@ -105,14 +105,12 @@ public class MovingWindowMedian implements ExtendedPlugInFilter, DialogListener
 	 * Scatterplots" by J.H. Friedman and W. Stuetzle (Project Orion, Department
 	 * of Statistics, Stanford University, 1982).
 	 *
-	 * @param waveforms	                    one-dimensional array composed of a
-	 *                                      series of concatenated records, each
-	 *                                      of size equal to
-	 *                                      {@code recordLength}
-	 * @param recordLength                  size of each record in
-	 *                                      {@code waveforms}
-	 * @param radius                        radius of moving window; length of two-sided window function
-	 *                                      is equal to {@code 2*radius+1}
+	 * @param waveforms	   one-dimensional array composed of a series of
+	 *                     concatenated records, each of size equal to
+	 *                     {@code recordLength}
+	 * @param recordLength size of each record in {@code waveforms}
+	 * @param radius       radius of moving window; length of two-sided window
+	 *                     function is equal to {@code 2*radius+1}
 	 */
 	public static final void execute(float[] waveforms, int recordLength, int radius)
 	{

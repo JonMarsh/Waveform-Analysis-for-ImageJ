@@ -108,7 +108,7 @@ public class InterpolateClippedRegions implements ExtendedPlugInFilter, DialogLi
 				double absValueLo = Math.abs(valueLo);
 				double absValueMid = Math.abs(valueMid);
 				double absValueHi = Math.abs(valueHi);
-				boolean zeroCrossed = valueLo*valueMid < 0.0 || valueMid*valueHi < 0.0;
+				boolean zeroCrossed = valueLo * valueMid < 0.0 || valueMid * valueHi < 0.0;
 				if (absValueMid < threshold // any point less than threshold is valid
 						|| (absValueMid >= threshold && absValueLo < threshold) // if the current point is past the threshold but the previous point wasn't, the current point is valid
 						|| (absValueMid >= threshold && absValueHi < threshold)
@@ -118,11 +118,10 @@ public class InterpolateClippedRegions implements ExtendedPlugInFilter, DialogLi
 					numberValid++;
 				}
 			}
-			
+
 //			for (int j = 0; j < recordLength; j++) {
 //				System.out.println(validX[j] + "\t" + validY[j]);
 //			}
-
 			// if clipping occurred, interpolate the waveform in the invalid regions
 			if (numberValid != recordLength) {
 
